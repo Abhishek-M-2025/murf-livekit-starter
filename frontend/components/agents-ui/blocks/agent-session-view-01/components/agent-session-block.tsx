@@ -204,6 +204,23 @@ export function AgentSessionView_01({
       className={cn('bg-background relative z-10 h-full w-full overflow-hidden', className)}
       {...props}
     >
+      {/* Floating status indicator */}
+      <div className="absolute top-6 left-0 w-full flex justify-center z-50 pointer-events-none">
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-teal-100 bg-teal-50/80 text-teal-800 dark:border-teal-900/30 dark:bg-teal-950/40 dark:text-teal-300 backdrop-blur-sm shadow-sm font-semibold text-xs md:text-sm transition-all duration-300 uppercase tracking-wider">
+          {agentState === 'speaking' ? (
+            <>
+              <span className="animate-pulse">🔊</span>
+              <span>Anusha is speaking</span>
+            </>
+          ) : (
+            <>
+              <span>🎤</span>
+              <span>Listening to you</span>
+            </>
+          )}
+        </div>
+      </div>
+
       <Fade top className="absolute inset-x-4 top-0 z-10 h-40" />
       {/* transcript */}
 
