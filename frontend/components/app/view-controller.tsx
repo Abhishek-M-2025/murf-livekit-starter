@@ -1,8 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSessionContext } from '@livekit/components-react';
+import { ConnectionState } from 'livekit-client';
 import type { AppConfig } from '@/app-config';
 import { AgentSessionView_01 } from '@/components/agents-ui/blocks/agent-session-view-01';
 import { WelcomeView } from '@/components/app/welcome-view';
@@ -33,8 +35,39 @@ interface ViewControllerProps {
 }
 
 export function ViewController({ appConfig }: ViewControllerProps) {
-  const { isConnected, start } = useSessionContext();
+  const { isConnected, connectionState, start } = useSessionContext();
   const { resolvedTheme } = useTheme();
+
+  const [micDenied, setMicDenied] = useState(false);
+  const [hasConnectedOnce, setHasConnectedOnce] = useState(false);
+
+  useEffect(() => {
+    if (isConnected) {
+      setHasConnectedOnce(true);
+    }
+  }, [isConnected]);
+
+  const handleStartCall = async () => {
+    try {
+      setMicDenied(false);
+      // Check microphone permission before calling start
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((track) => track.stop());
+      await start();
+    } catch (error) {
+      console.error('Microphone access check failed:', error);
+      setMicDenied(true);
+    }
+  };
+
+  let welcomeState: 'ready' | 'connecting' | 'ended' | 'denied' = 'ready';
+  if (micDenied) {
+    welcomeState = 'denied';
+  } else if (connectionState === ConnectionState.Connecting) {
+    welcomeState = 'connecting';
+  } else if (hasConnectedOnce) {
+    welcomeState = 'ended';
+  }
 
   return (
     <AnimatePresence mode="wait">
@@ -43,8 +76,9 @@ export function ViewController({ appConfig }: ViewControllerProps) {
         <MotionWelcomeView
           key="welcome"
           {...VIEW_MOTION_PROPS}
-          startButtonText={appConfig.startButtonText}
-          onStartCall={start}
+          state={welcomeState}
+          onStartCall={handleStartCall}
+          onRetry={handleStartCall}
         />
       )}
       {/* Session view */}
