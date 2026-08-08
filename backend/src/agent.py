@@ -21,8 +21,13 @@ logger = logging.getLogger("agent")
 
 load_dotenv(".env.local")
 
+<<<<<<< HEAD
 # Change this prompt to change what your voice agent does.
 # See README.md for example prompts (customer support, language tutor, receptionist).
+=======
+# # Change this prompt to change what your voice agent does.
+# # See README.md for example prompts (customer support, language tutor, receptionist).
+>>>>>>> c2e0a94 (feat: implement Day 3 Health Access frontend)
 # SYSTEM_PROMPT = """You are a friendly and efficient customer support agent for a tech company. Help users with account issues, billing questions, and product troubleshooting. Be concise, empathetic, and solution-oriented. If you don't know something, say so honestly and offer to escalate. Your responses are concise and without complex formatting, emojis, or symbols."""
 
 
@@ -74,7 +79,7 @@ async def my_agent(ctx: JobContext):
         # A Large Language Model (LLM) is your agent's brain, processing user input and generating a response
         # See all available models at https://docs.livekit.io/agents/models/llm/
         llm=google.LLM(
-                model="gemini-2.5-flash",
+        model="gemini-3.6-flash",
             ),
         # Text-to-speech (TTS) is your agent's voice, turning the LLM's text into speech that the user can hear
         # See all available models as well as voice selections at https://docs.livekit.io/agents/models/tts/
