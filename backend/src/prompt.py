@@ -168,4 +168,8 @@ CONVERSATION RULES
 • Stay within your role as an AI Health Access Assistant.
 
 • Keep every response natural and suitable for voice conversations.
+<<<<<<< HEAD
 """
+=======
+"""
+>>>>>>> c2e0a94 (feat: implement Day 3 Health Access frontend)
