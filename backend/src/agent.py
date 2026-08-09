@@ -2,6 +2,7 @@ import logging
 
 from dotenv import load_dotenv
 from prompt import SYSTEM_PROMPT
+
 from livekit import rtc
 from livekit.agents import (
     Agent,
@@ -10,47 +11,168 @@ from livekit.agents import (
     JobContext,
     JobProcess,
     cli,
-    inference,
     tokenize,
     room_io,
+    RunContext,
+    function_tool,
 )
-from livekit.plugins import murf, silero, google, deepgram, noise_cancellation
+from livekit.plugins import (
+    murf,
+    silero,
+    google,
+    deepgram,
+    noise_cancellation,
+)
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
+
+import db
+
 
 logger = logging.getLogger("agent")
 
 load_dotenv(".env.local")
 
-<<<<<<< HEAD
-# Change this prompt to change what your voice agent does.
-# See README.md for example prompts (customer support, language tutor, receptionist).
-=======
-# # Change this prompt to change what your voice agent does.
-# # See README.md for example prompts (customer support, language tutor, receptionist).
->>>>>>> c2e0a94 (feat: implement Day 3 Health Access frontend)
-# SYSTEM_PROMPT = """You are a friendly and efficient customer support agent for a tech company. Help users with account issues, billing questions, and product troubleshooting. Be concise, empathetic, and solution-oriented. If you don't know something, say so honestly and offer to escalate. Your responses are concise and without complex formatting, emojis, or symbols."""
+
+def get_user_id(session: AgentSession, user_id: str = "") -> str:
+    """
+    Resolve the persistent user ID.
+
+    Priority:
+    1. Explicit user_id supplied by the tool call.
+    2. LiveKit linked participant identity.
+    3. Fallback to default_user.
+    """
+
+    if user_id:
+        return user_id
+
+    try:
+        participant = session.room_io.linked_participant
+
+        if participant:
+            return participant.identity
+
+    except Exception:
+        logger.exception(
+            "Could not resolve linked participant identity"
+        )
+
+    return "default_user"
 
 
 class Assistant(Agent):
-    def __init__(self) -> None:
-        super().__init__(instructions=SYSTEM_PROMPT)
+    def __init__(self, session: AgentSession) -> None:
+        self._session = session
 
-    # To add tools, use the @function_tool decorator.
-    # Here's an example that adds a simple weather tool.
-    # You also have to add `from livekit.agents import function_tool, RunContext` to the top of this file
-    # @function_tool
-    # async def lookup_weather(self, context: RunContext, location: str):
-    #     """Use this tool to look up current weather information in the given location.
-    #
-    #     If the location is not supported by the weather service, the tool will indicate this. You must tell the user the location's weather is unavailable.
-    #
-    #     Args:
-    #         location: The location to look up weather information for (e.g. city name)
-    #     """
-    #
-    #     logger.info(f"Looking up weather for {location}")
-    #
-    #     return "sunny with a temperature of 70 degrees."
+        super().__init__(
+            instructions=SYSTEM_PROMPT
+        )
+
+    @function_tool
+    async def lookup_user(
+        self,
+        context: RunContext,
+        user_id: str = "",
+    ) -> str:
+        """
+        Find an existing caller from the SQLite database.
+
+        Args:
+            user_id: Optional unique user ID.
+            If not provided, the LiveKit participant identity
+            will be used automatically.
+        """
+
+        resolved_uid = get_user_id(
+            self._session,
+            user_id,
+        )
+
+        logger.info(
+            "Looking up user with ID: %s",
+            resolved_uid,
+        )
+
+        user = db.get_user(resolved_uid)
+
+        if user:
+            logger.info(
+                "User found: %s",
+                resolved_uid,
+            )
+
+            return (
+                f"User found: "
+                f"ID={user['user_id']}, "
+                f"Name={user['name']}, "
+                f"Language Preference={user['language_preference']}, "
+                f"Facts={user['facts']}, "
+                f"Last Interaction={user['last_interaction']}"
+            )
+
+        logger.info(
+            "No user found for ID: %s",
+            resolved_uid,
+        )
+
+        return "No user found with this ID."
+
+    @function_tool
+    async def save_user(
+        self,
+        context: RunContext,
+        name: str,
+        language_preference: str,
+        facts: str,
+        last_interaction: str,
+        user_id: str = "",
+    ) -> str:
+        """
+        Save or update caller information in SQLite.
+
+        The agent must explicitly ask for permission
+        before saving user information.
+
+        Args:
+            name: The caller's name.
+            language_preference:
+                English, Hindi, or Hinglish.
+            facts:
+                Relevant non-sensitive information about
+                the caller.
+            last_interaction:
+                Summary of the latest interaction.
+            user_id:
+                Optional unique user ID.
+        """
+
+        resolved_uid = get_user_id(
+            self._session,
+            user_id,
+        )
+
+        logger.info(
+            "Saving user with ID: %s",
+            resolved_uid,
+        )
+
+        db.save_user_db(
+            user_id=resolved_uid,
+            name=name,
+            language_preference=language_preference,
+            facts=facts,
+            last_interaction=last_interaction,
+        )
+
+        logger.info(
+            "User successfully saved: %s",
+            resolved_uid,
+        )
+
+        return (
+            f"User details successfully saved "
+            f"for ID {resolved_uid}."
+        )
 
 
 server = AgentServer()
@@ -65,60 +187,49 @@ server.setup_fnc = prewarm
 
 @server.rtc_session(agent_name="my-agent")
 async def my_agent(ctx: JobContext):
+
     # Logging setup
-    # Add any other context you want in all log entries here
     ctx.log_context_fields = {
         "room": ctx.room.name,
     }
 
-    # Set up a voice AI pipeline using Murf Falcon, Gemini, Deepgram, and the LiveKit turn detector
+    # Create the voice AI pipeline
     session = AgentSession(
-        # Speech-to-text (STT) is your agent's ears, turning the user's speech into text that the LLM can understand
-        # See all available models at https://docs.livekit.io/agents/models/stt/
-        stt=deepgram.STT(model="nova-3"),
-        # A Large Language Model (LLM) is your agent's brain, processing user input and generating a response
-        # See all available models at https://docs.livekit.io/agents/models/llm/
+
+        # Speech-to-text
+        stt=deepgram.STT(
+            model="nova-3",
+            language="multi",
+        ),
+
+        # LLM
         llm=google.LLM(
-        model="gemini-3.6-flash",
-            ),
-        # Text-to-speech (TTS) is your agent's voice, turning the LLM's text into speech that the user can hear
-        # See all available models as well as voice selections at https://docs.livekit.io/agents/models/tts/
+            model="gemini-3.5-flash-lite",
+        ),
+
+        # Text-to-speech
         tts=murf.TTS(
-                voice="en-In-anusha", 
-                style="Conversation",
-                tokenizer=tokenize.basic.SentenceTokenizer(min_sentence_len=2),
-                text_pacing=True
+            voice="Anisha",
+            style="Conversation",
+            tokenizer=tokenize.basic.SentenceTokenizer(
+                min_sentence_len=2
             ),
-        # VAD and turn detection are used to determine when the user is speaking and when the agent should respond
-        # See more at https://docs.livekit.io/agents/build/turns
+            text_pacing=True,
+        ),
+
+        # Turn detection
         turn_detection=MultilingualModel(),
+
+        # Voice activity detection
         vad=ctx.proc.userdata["vad"],
-        # allow the LLM to generate a response while waiting for the end of turn
-        # See more at https://docs.livekit.io/agents/build/audio/#preemptive-generation
+
+        # Generate response while waiting for end of turn
         preemptive_generation=True,
     )
 
-    # To use a realtime model instead of a voice pipeline, use the following session setup instead.
-    # (Note: This is for the OpenAI Realtime API. For other providers, see https://docs.livekit.io/agents/models/realtime/))
-    # 1. Install livekit-agents[openai]
-    # 2. Set OPENAI_API_KEY in .env.local
-    # 3. Add `from livekit.plugins import openai` to the top of this file
-    # 4. Use the following session setup instead of the version above
-    # session = AgentSession(
-    #     llm=openai.realtime.RealtimeModel(voice="marin")
-    # )
-
-    # # Add a virtual avatar to the session, if desired
-    # # For other providers, see https://docs.livekit.io/agents/models/avatar/
-    # avatar = hedra.AvatarSession(
-    #   avatar_id="...",  # See https://docs.livekit.io/agents/models/avatar/plugins/hedra
-    # )
-    # # Start the avatar and wait for it to join
-    # await avatar.start(session, room=ctx.room)
-
-    # Start the session, which initializes the voice pipeline and warms up the models
+    # Start the session
     await session.start(
-        agent=Assistant(),
+        agent=Assistant(session),
         room=ctx.room,
         room_options=room_io.RoomOptions(
             audio_input=room_io.AudioInputOptions(
@@ -132,7 +243,7 @@ async def my_agent(ctx: JobContext):
         ),
     )
 
-    # Join the room and connect to the user
+    # Connect to the LiveKit room
     await ctx.connect()
 
 
