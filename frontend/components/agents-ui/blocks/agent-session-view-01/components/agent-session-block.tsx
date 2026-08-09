@@ -210,7 +210,7 @@ export function AgentSessionView_01({
           {agentState === 'speaking' ? (
             <>
               <span className="animate-pulse">🔊</span>
-              <span>Anusha is speaking</span>
+              <span>Anisha is speaking</span>
             </>
           ) : (
             <>
