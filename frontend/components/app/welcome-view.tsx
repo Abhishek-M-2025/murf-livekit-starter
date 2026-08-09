@@ -27,7 +27,7 @@ export const WelcomeView = ({
               <HeartPulse className="size-12" />
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground mb-1">
-              Anusha
+              Anisha
             </h1>
             <p className="text-teal-600 dark:text-teal-400 font-medium text-sm uppercase tracking-wider mb-6">
               Health Access Assistant
@@ -51,7 +51,7 @@ export const WelcomeView = ({
               <Loader2 className="size-12 animate-spin" />
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground mb-2">
-              Connecting to Anusha...
+              Connecting to Anisha...
             </h1>
             <p className="text-muted-foreground text-sm font-medium">
               Please wait
@@ -68,7 +68,7 @@ export const WelcomeView = ({
               Call Ended
             </h1>
             <p className="text-muted-foreground text-sm mb-8">
-              Thank you for consulting Anusha.
+              Thank you for consulting Anisha.
             </p>
             <Button
               size="lg"
@@ -89,7 +89,7 @@ export const WelcomeView = ({
               Microphone Access Blocked
             </h1>
             <p className="text-muted-foreground text-sm max-w-sm mb-8 leading-relaxed">
-              Your microphone permission is currently blocked. Please allow microphone access in your browser settings to talk to Anusha.
+              Your microphone permission is currently blocked. Please allow microphone access in your browser settings to talk to Anisha.
             </p>
             <Button
               size="lg"
