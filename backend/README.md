@@ -27,14 +27,14 @@ cp .env.example .env.local
 
 Fill in your keys in `.env.local`:
 
-| Variable | Where to get it |
-|----------|-----------------|
-| `LIVEKIT_URL` | [LiveKit Cloud](https://cloud.livekit.io/) → Settings |
-| `LIVEKIT_API_KEY` | [LiveKit Cloud](https://cloud.livekit.io/) → Settings |
-| `LIVEKIT_API_SECRET` | [LiveKit Cloud](https://cloud.livekit.io/) → Settings |
-| `MURF_API_KEY` | [murf.ai/api/dashboard](https://murf.ai/api/dashboard) |
-| `DEEPGRAM_API_KEY` | [deepgram.com](https://console.deepgram.com/) |
-| `GOOGLE_API_KEY` | [aistudio.google.com](https://aistudio.google.com/apikey) |
+| Variable             | Where to get it                                           |
+| -------------------- | --------------------------------------------------------- |
+| `LIVEKIT_URL`        | [LiveKit Cloud](https://cloud.livekit.io/) → Settings     |
+| `LIVEKIT_API_KEY`    | [LiveKit Cloud](https://cloud.livekit.io/) → Settings     |
+| `LIVEKIT_API_SECRET` | [LiveKit Cloud](https://cloud.livekit.io/) → Settings     |
+| `MURF_API_KEY`       | [murf.ai/api/dashboard](https://murf.ai/api/dashboard)    |
+| `DEEPGRAM_API_KEY`   | [deepgram.com](https://console.deepgram.com/)             |
+| `GOOGLE_API_KEY`     | [aistudio.google.com](https://aistudio.google.com/apikey) |
 
 For LiveKit Cloud users, you can auto-populate LiveKit credentials:
 
@@ -66,7 +66,7 @@ uv run python src/agent.py start
 
 ## Configuration
 
-All configuration lives in [`src/agent.py`](src/agent.py).
+All configuration lives in `src/agent.py`.
 
 ### System prompt
 
@@ -149,12 +149,12 @@ tts=murf.TTS(
 
 Some voice options:
 
-| Voice ID | Description |
-|----------|-------------|
+| Voice ID        | Description                |
+| --------------- | -------------------------- |
 | `en-US-matthew` | US English, male (default) |
-| `en-US-natalie` | US English, female |
-| `en-UK-ruby` | UK English, female |
-| `en-US-miles` | US English, male |
+| `en-US-natalie` | US English, female         |
+| `en-UK-ruby`    | UK English, female         |
+| `en-US-miles`   | US English, male           |
 
 Browse all 150+ voices: [Murf Voice Library](https://murf.ai/api/docs/voices-styles/voice-library).
 
@@ -170,8 +170,8 @@ stt=deepgram.STT(model="nova-3")
 
 Default is Google Gemini. To switch:
 
-- **Gemini (default):** Set `GOOGLE_API_KEY` in `.env.local`
-- **OpenAI:** Set `OPENAI_API_KEY`, install `livekit-agents[openai]`, and change the `llm=` argument
+* **Gemini (default):** Set `GOOGLE_API_KEY` in `.env.local`
+* **OpenAI:** Set `OPENAI_API_KEY`, install `livekit-agents[openai]`, and change the `llm=` argument
 
 ## Testing
 
@@ -181,7 +181,7 @@ The project includes an eval suite based on the LiveKit Agents [testing framewor
 uv run pytest
 ```
 
-Tests are in [`tests/test_agent.py`](tests/test_agent.py) and use LLM-as-judge evaluations to verify the agent behaves correctly (friendly greetings, grounding, refusing harmful requests).
+Tests are in `tests/test_agent.py` and use LLM-as-judge evaluations to verify the agent behaves correctly (friendly greetings, grounding, refusing harmful requests).
 
 To run tests in CI, you'll need to add `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET` as repository secrets.
 
@@ -189,17 +189,16 @@ To run tests in CI, you'll need to add `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LI
 
 ### Railway
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/tIVCF1?referralCode=cNjn2P&utm_medium=integration&utm_source=template&utm_campaign=generic)
-
 Set these environment variables in Railway:
-- `MURF_API_KEY`
-- `DEEPGRAM_API_KEY`
-- `GOOGLE_API_KEY`
-- `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`
+
+* `MURF_API_KEY`
+* `DEEPGRAM_API_KEY`
+* `GOOGLE_API_KEY`
+* `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`
 
 ### Docker
 
-A production-ready [Dockerfile](Dockerfile) is included:
+A production-ready Dockerfile is included:
 
 ```bash
 docker build -t murf-voice-agent .
@@ -225,42 +224,78 @@ backend/
 As part of the Murf AI "10 Days of Voice Agents – #VoiceForBharat" challenge (Health Access track), Day 5 adds a verified government health facility lookup tool.
 
 ### Features
-- **Tool Added:** `find_nearest_health_facility(location_or_district)` is registered as a function tool.
-- **Persistent Memory Integration:** If the user's district or location is already stored in their profile facts from Day 4, the agent automatically reuses it. Otherwise, it politely prompts the user for their location.
-- **Data Source:**
-  - **Live API:** Connects to the official `data.gov.in` database using the `DATA_GOV_IN_API_KEY` (default resource: `9ef84268-d588-465a-a308-a864a43d0070`).
-  - **Local/Static Fallback:** If the live API is not configured or fails, the agent falls back to a high-fidelity local dataset (`health_facilities.json`) containing real, verified public health facilities across **20 major Indian districts** representing 20 different states and UTs.
-- **Data Freshness:** The voice response states whether the information is retrieved from "live government data" or the "local fallback dataset".
-- **Failure/No-Result Handling:** If both the API and the local database have no record of the location or fail, the agent says: *"I’m unable to access the health facility data right now, so I don’t want to give you an unverified location. Please try again later."* The agent never hallucinates facility names.
+
+* **Tool Added:** `find_nearest_health_facility(location_or_district)` is registered as a function tool.
+* **Persistent Memory Integration:** If the user's district or location is already stored in their profile facts from Day 4, the agent automatically reuses it. Otherwise, it politely prompts the user for their location.
+* **Data Source:**
+
+  * **Live API:** Connects to the official `data.gov.in` database using the `DATA_GOV_IN_API_KEY` (default resource: `9ef84268-d588-465a-a308-a864a43d0070`).
+  * **Local/Static Fallback:** If the live API is not configured or fails, the agent falls back to a high-fidelity local dataset (`health_facilities.json`) containing real, verified public health facilities across **20 major Indian districts** representing 20 different states and UTs.
+
+### 20 States/UTs Covered
+
+The local fallback dataset covers 20 major Indian districts representing 20 different states and UTs:
+
+1. Andhra Pradesh
+2. Assam
+3. Bihar
+4. Chhattisgarh
+5. Gujarat
+6. Haryana
+7. Himachal Pradesh
+8. Jharkhand
+9. Karnataka
+10. Kerala
+11. Madhya Pradesh
+12. Maharashtra
+13. Odisha
+14. Punjab
+15. Rajasthan
+16. Tamil Nadu
+17. Telangana
+18. Uttar Pradesh
+19. Uttarakhand
+20. West Bengal
+
+* **Data Freshness:** The voice response states whether the information is retrieved from "live government data" or the "local fallback dataset".
+* **Failure/No-Result Handling:** If both the API and the local database have no record of the location or fail, the agent says: *"I’m unable to access the health facility data right now, so I don’t want to give you an unverified location. Please try again later."* The agent never hallucinates facility names.
 
 ### Environment Variables
+
 To enable live API lookup, add the following variables to `backend/.env.local`:
+
 ```env
 DATA_GOV_IN_API_KEY=your_data_gov_in_api_key_here
 DATA_GOV_IN_RESOURCE_ID=9ef84268-d588-465a-a308-a864a43d0070
 ```
 
 ### Running and Testing
+
 1. Start the LiveKit agent:
+
    ```bash
    cd backend
    uv run python src/agent.py dev
    ```
+
 2. Speak to the agent using the browser UI or console, and ask:
-   - *"Mere nearest government health centre kaunsa hai?"*
-   - *"Mere district mein nearest PHC kahan hai?"*
+
+   * *"Mere nearest government health centre kaunsa hai?"*
+   * *"Mere district mein nearest PHC kahan hai?"*
+
 3. Run the automated tests verifying this behavior:
+
    ```bash
    uv run pytest
    ```
 
 ## Links
 
-- [Murf Falcon TTS Docs](https://murf.ai/api/docs/text-to-speech/streaming)
-- [Murf Voice Library](https://murf.ai/api/docs/voices-styles/voice-library)
-- [LiveKit Agents Docs](https://docs.livekit.io/agents)
-- [Deepgram Nova-3 Docs](https://developers.deepgram.com)
+* [Murf Falcon TTS Docs](https://murf.ai/api/docs/text-to-speech/streaming)
+* [Murf Voice Library](https://murf.ai/api/docs/voices-styles/voice-library)
+* [LiveKit Agents Docs](https://docs.livekit.io/agents)
+* [Deepgram Nova-3 Docs](https://developers.deepgram.com)
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see LICENSE.
