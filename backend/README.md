@@ -220,6 +220,40 @@ backend/
 └── railway.toml           # Railway deploy config
 ```
 
+## Day 5: Nearest PHC / Government Health Facility Lookup
+
+As part of the Murf AI "10 Days of Voice Agents – #VoiceForBharat" challenge (Health Access track), Day 5 adds a verified government health facility lookup tool.
+
+### Features
+- **Tool Added:** `find_nearest_health_facility(location_or_district)` is registered as a function tool.
+- **Persistent Memory Integration:** If the user's district or location is already stored in their profile facts from Day 4, the agent automatically reuses it. Otherwise, it politely prompts the user for their location.
+- **Data Source:**
+  - **Live API:** Connects to the official `data.gov.in` database using the `DATA_GOV_IN_API_KEY` (default resource: `9ef84268-d588-465a-a308-a864a43d0070`).
+  - **Local/Static Fallback:** If the live API is not configured or fails, the agent falls back to a high-fidelity local dataset (`health_facilities.json`) containing real, verified public health facilities across **20 major Indian districts** representing 20 different states and UTs.
+- **Data Freshness:** The voice response states whether the information is retrieved from "live government data" or the "local fallback dataset".
+- **Failure/No-Result Handling:** If both the API and the local database have no record of the location or fail, the agent says: *"I’m unable to access the health facility data right now, so I don’t want to give you an unverified location. Please try again later."* The agent never hallucinates facility names.
+
+### Environment Variables
+To enable live API lookup, add the following variables to `backend/.env.local`:
+```env
+DATA_GOV_IN_API_KEY=your_data_gov_in_api_key_here
+DATA_GOV_IN_RESOURCE_ID=9ef84268-d588-465a-a308-a864a43d0070
+```
+
+### Running and Testing
+1. Start the LiveKit agent:
+   ```bash
+   cd backend
+   uv run python src/agent.py dev
+   ```
+2. Speak to the agent using the browser UI or console, and ask:
+   - *"Mere nearest government health centre kaunsa hai?"*
+   - *"Mere district mein nearest PHC kahan hai?"*
+3. Run the automated tests verifying this behavior:
+   ```bash
+   uv run pytest
+   ```
+
 ## Links
 
 - [Murf Falcon TTS Docs](https://murf.ai/api/docs/text-to-speech/streaming)
