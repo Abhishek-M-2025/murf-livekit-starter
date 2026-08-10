@@ -1,0 +1,462 @@
+{
+  "pune": [
+    {
+      "name": "Hinjewadi Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Pune",
+      "state": "Maharashtra",
+      "address": "Near Hinjewadi IT Park, Phase 1, Hinjewadi, Pune, Maharashtra - 411057"
+    },
+    {
+      "name": "Aundh District Hospital",
+      "type": "District Hospital / Government Hospital",
+      "district": "Pune",
+      "state": "Maharashtra",
+      "address": "Aundh-Bremann Hospital Road, Aundh, Pune, Maharashtra - 411007"
+    },
+    {
+      "name": "Wagholi Rural Hospital",
+      "type": "Rural Hospital (RH) / Community Health Centre",
+      "district": "Pune",
+      "state": "Maharashtra",
+      "address": "Pune-Nagar Road, Wagholi, Pune, Maharashtra - 412207"
+    }
+  ],
+  "patna": [
+    {
+      "name": "Phulwarisharif Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Patna",
+      "state": "Bihar",
+      "address": "Near Block Office, Phulwarisharif, Patna, Bihar - 801505"
+    },
+    {
+      "name": "Danapur Sub-Divisional Hospital",
+      "type": "Sub-Divisional Hospital / Government Hospital",
+      "district": "Patna",
+      "state": "Bihar",
+      "address": "Danapur Cantt, Patna, Bihar - 801503"
+    },
+    {
+      "name": "Lok Nayak Jai Prakash Narayan Hospital",
+      "type": "Government Hospital / Trauma Centre",
+      "district": "Patna",
+      "state": "Bihar",
+      "address": "Rajvanshi Nagar, Patna, Bihar - 800023"
+    }
+  ],
+  "shimla": [
+    {
+      "name": "Mashobra Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Shimla",
+      "state": "Himachal Pradesh",
+      "address": "Mashobra Bazaar, Mashobra, Shimla, Himachal Pradesh - 171007"
+    },
+    {
+      "name": "Kasumpti Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Shimla",
+      "state": "Himachal Pradesh",
+      "address": "Kasumpti, Shimla, Himachal Pradesh - 171009"
+    },
+    {
+      "name": "Theog Community Health Centre",
+      "type": "Community Health Centre (CHC)",
+      "district": "Shimla",
+      "state": "Himachal Pradesh",
+      "address": "Narkanda Road, Theog, Shimla, Himachal Pradesh - 171201"
+    }
+  ],
+  "bengaluru": [
+    {
+      "name": "Jayanagar Urban Primary Health Centre",
+      "type": "Urban Primary Health Centre (UPHC)",
+      "district": "Bengaluru",
+      "state": "Karnataka",
+      "address": "4th T Block, Jayanagar, Bengaluru, Karnataka - 560041"
+    },
+    {
+      "name": "Begur Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Bengaluru",
+      "state": "Karnataka",
+      "address": "Begur Road, near Begur Lake, Bengaluru, Karnataka - 560068"
+    },
+    {
+      "name": "KC General Hospital",
+      "type": "General Hospital / Government Hospital",
+      "district": "Bengaluru",
+      "state": "Karnataka",
+      "address": "5th Cross Road, Malleshwaram, Bengaluru, Karnataka - 560003"
+    }
+  ],
+  "lucknow": [
+    {
+      "name": "Chinhat Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Lucknow",
+      "state": "Uttar Pradesh",
+      "address": "Faizabad Road, Chinhat, Lucknow, Uttar Pradesh - 226028"
+    },
+    {
+      "name": "Kakori Community Health Centre",
+      "type": "Community Health Centre (CHC)",
+      "district": "Lucknow",
+      "state": "Uttar Pradesh",
+      "address": "Hardoi Road, Kakori, Lucknow, Uttar Pradesh - 226101"
+    },
+    {
+      "name": "Dr. Ram Manohar Lohia Institute of Medical Sciences",
+      "type": "Government Referral Hospital & Research Institute",
+      "district": "Lucknow",
+      "state": "Uttar Pradesh",
+      "address": "Vibhuti Khand, Gomti Nagar, Lucknow, Uttar Pradesh - 226010"
+    }
+  ],
+  "jaipur": [
+    {
+      "name": "Jhotwara Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Jaipur",
+      "state": "Rajasthan",
+      "address": "Jhotwara Town, Jaipur, Rajasthan - 302012"
+    },
+    {
+      "name": "Sanganer Community Health Centre",
+      "type": "Community Health Centre (CHC)",
+      "district": "Jaipur",
+      "state": "Rajasthan",
+      "address": "Tonk Road, Sanganer, Jaipur, Rajasthan - 302029"
+    },
+    {
+      "name": "Sawai Man Singh Hospital",
+      "type": "Government Referral Hospital",
+      "district": "Jaipur",
+      "state": "Rajasthan",
+      "address": "Jawahar Lal Nehru Marg, Jaipur, Rajasthan - 302004"
+    }
+  ],
+  "bhopal": [
+    {
+      "name": "Kolar Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Bhopal",
+      "state": "Madhya Pradesh",
+      "address": "Kolar Road, Bhopal, Madhya Pradesh - 462042"
+    },
+    {
+      "name": "Gandhinagar Community Health Centre",
+      "type": "Community Health Centre (CHC)",
+      "district": "Bhopal",
+      "state": "Madhya Pradesh",
+      "address": "Gandhinagar Main Road, Bhopal, Madhya Pradesh - 462036"
+    },
+    {
+      "name": "Hamidia Hospital",
+      "type": "Government General Hospital",
+      "district": "Bhopal",
+      "state": "Madhya Pradesh",
+      "address": "Medical College Campus, Royal Market, Bhopal, Madhya Pradesh - 462001"
+    }
+  ],
+  "gandhinagar": [
+    {
+      "name": "Pethapur Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Gandhinagar",
+      "state": "Gujarat",
+      "address": "Pethapur Bazaar, Gandhinagar, Gujarat - 382610"
+    },
+    {
+      "name": "Mansa Community Health Centre",
+      "type": "Community Health Centre (CHC)",
+      "district": "Gandhinagar",
+      "state": "Gujarat",
+      "address": "Mansa Main Road, Gandhinagar, Gujarat - 382845"
+    },
+    {
+      "name": "Civil Hospital Gandhinagar",
+      "type": "District General Hospital",
+      "district": "Gandhinagar",
+      "state": "Gujarat",
+      "address": "Sector 12, Gandhinagar, Gujarat - 382012"
+    }
+  ],
+  "chennai": [
+    {
+      "name": "Adyar Urban Primary Health Centre",
+      "type": "Urban Primary Health Centre (UPHC)",
+      "district": "Chennai",
+      "state": "Tamil Nadu",
+      "address": "Adyar, Chennai, Tamil Nadu - 600020"
+    },
+    {
+      "name": "Medavakkam Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Chennai",
+      "state": "Tamil Nadu",
+      "address": "Velachery Main Road, Medavakkam, Chennai, Tamil Nadu - 600100"
+    },
+    {
+      "name": "Rajiv Gandhi Government General Hospital",
+      "type": "Government General Hospital",
+      "district": "Chennai",
+      "state": "Tamil Nadu",
+      "address": "E.V.R. Periyar Salai, Park Town, Chennai, Tamil Nadu - 600003"
+    }
+  ],
+  "hyderabad": [
+    {
+      "name": "Amberpet Urban Primary Health Centre",
+      "type": "Urban Primary Health Centre (UPHC)",
+      "district": "Hyderabad",
+      "state": "Telangana",
+      "address": "Amberpet Road, Hyderabad, Telangana - 500013"
+    },
+    {
+      "name": "Shamshabad Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Hyderabad",
+      "state": "Telangana",
+      "address": "Shamshabad, Hyderabad, Telangana - 501218"
+    },
+    {
+      "name": "Osmania General Hospital",
+      "type": "Government General Hospital",
+      "district": "Hyderabad",
+      "state": "Telangana",
+      "address": "Afzal Gunj, Hyderabad, Telangana - 500012"
+    }
+  ],
+  "dehradun": [
+    {
+      "name": "Raipur Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Dehradun",
+      "state": "Uttarakhand",
+      "address": "Raipur Town, Dehradun, Uttarakhand - 248008"
+    },
+    {
+      "name": "Doiwala Community Health Centre",
+      "type": "Community Health Centre (CHC)",
+      "district": "Dehradun",
+      "state": "Uttarakhand",
+      "address": "Rishikesh Highway, Doiwala, Dehradun, Uttarakhand - 248140"
+    },
+    {
+      "name": "Doon Government Hospital",
+      "type": "District General Hospital",
+      "district": "Dehradun",
+      "state": "Uttarakhand",
+      "address": "Dehradun Centre, Dehradun, Uttarakhand - 248001"
+    }
+  ],
+  "thiruvananthapuram": [
+    {
+      "name": "Vellanad Family Health Centre",
+      "type": "Family Health Centre (FHC)",
+      "district": "Thiruvananthapuram",
+      "state": "Kerala",
+      "address": "Vellanad Junction, Thiruvananthapuram, Kerala - 695543"
+    },
+    {
+      "name": "Vizhinjam Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Thiruvananthapuram",
+      "state": "Kerala",
+      "address": "Harbour Road, Vizhinjam, Thiruvananthapuram, Kerala - 695521"
+    },
+    {
+      "name": "Government Medical College Hospital",
+      "type": "Government Referral Hospital",
+      "district": "Thiruvananthapuram",
+      "state": "Kerala",
+      "address": "Medical College Road, Ulloor, Thiruvananthapuram, Kerala - 695011"
+    }
+  ],
+  "guwahati": [
+    {
+      "name": "Azara Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Guwahati",
+      "state": "Assam",
+      "address": "VIP Road, Azara, Guwahati, Assam - 781017"
+    },
+    {
+      "name": "Pandu Community Health Centre",
+      "type": "Community Health Centre (CHC)",
+      "district": "Guwahati",
+      "state": "Assam",
+      "address": "Pandu Port Road, Maligaon, Guwahati, Assam - 781012"
+    },
+    {
+      "name": "Gauhati Medical College and Hospital",
+      "type": "Government General Hospital",
+      "district": "Guwahati",
+      "state": "Assam",
+      "address": "Indrapur, Bhangagarh, Guwahati, Assam - 781032"
+    }
+  ],
+  "bhubaneswar": [
+    {
+      "name": "Mendhasal Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Bhubaneswar",
+      "state": "Odisha",
+      "address": "Khurda Road, Mendhasal, Odisha - 752054"
+    },
+    {
+      "name": "Jatni Community Health Centre",
+      "type": "Community Health Centre (CHC)",
+      "district": "Bhubaneswar",
+      "state": "Odisha",
+      "address": "Jatni Station Road, Khurda, Odisha - 752050"
+    },
+    {
+      "name": "Capital Hospital Bhubaneswar",
+      "type": "Government General Hospital",
+      "district": "Bhubaneswar",
+      "state": "Odisha",
+      "address": "Unit 6, Ganga Nagar, Bhubaneswar, Odisha - 751001"
+    }
+  ],
+  "amritsar": [
+    {
+      "name": "Verka Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Amritsar",
+      "state": "Punjab",
+      "address": "Batala Road, Verka, Amritsar, Punjab - 143501"
+    },
+    {
+      "name": "Lopoke Community Health Centre",
+      "type": "Community Health Centre (CHC)",
+      "district": "Amritsar",
+      "state": "Punjab",
+      "address": "Attari Road, Lopoke, Amritsar, Punjab - 143110"
+    },
+    {
+      "name": "Guru Nanak Dev Hospital",
+      "type": "Government General Hospital",
+      "district": "Amritsar",
+      "state": "Punjab",
+      "address": "Majitha Road, Amritsar, Punjab - 143001"
+    }
+  ],
+  "srinagar": [
+    {
+      "name": "Zadibal Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Srinagar",
+      "state": "Jammu & Kashmir",
+      "address": "Zadibal, Srinagar, Jammu & Kashmir - 190011"
+    },
+    {
+      "name": "Hazratbal Community Health Centre",
+      "type": "Community Health Centre (CHC)",
+      "district": "Srinagar",
+      "state": "Jammu & Kashmir",
+      "address": "Hazratbal Road, Srinagar, Jammu & Kashmir - 190006"
+    },
+    {
+      "name": "Shri Maharaja Hari Singh Hospital",
+      "type": "Government Referral Hospital",
+      "district": "Srinagar",
+      "state": "Jammu & Kashmir",
+      "address": "Karan Nagar, Srinagar, Jammu & Kashmir - 190010"
+    }
+  ],
+  "raipur": [
+    {
+      "name": "Mandir Hasaud Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Raipur",
+      "state": "Chhattisgarh",
+      "address": "National Highway 53, Mandir Hasaud, Raipur, Chhattisgarh - 492101"
+    },
+    {
+      "name": "Abhanpur Community Health Centre",
+      "type": "Community Health Centre (CHC)",
+      "district": "Raipur",
+      "state": "Chhattisgarh",
+      "address": "Dhamtari Road, Abhanpur, Raipur, Chhattisgarh - 493661"
+    },
+    {
+      "name": "Dr. B.R. Ambedkar Memorial Hospital",
+      "type": "Government General Hospital",
+      "district": "Raipur",
+      "state": "Chhattisgarh",
+      "address": "Jail Road, Raipur, Chhattisgarh - 492001"
+    }
+  ],
+  "kolkata": [
+    {
+      "name": "Kidderpore Urban Primary Health Centre",
+      "type": "Urban Primary Health Centre (UPHC)",
+      "district": "Kolkata",
+      "state": "West Bengal",
+      "address": "Kidderpore, Kolkata, West Bengal - 700023"
+    },
+    {
+      "name": "Thakurpukur Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Kolkata",
+      "state": "West Bengal",
+      "address": "Diamond Harbour Road, Thakurpukur, Kolkata, West Bengal - 700063"
+    },
+    {
+      "name": "Seth Sukhlal Karnani Memorial Hospital",
+      "type": "Government Referral Hospital",
+      "district": "Kolkata",
+      "state": "West Bengal",
+      "address": "244, AJC Bose Road, Kolkata, West Bengal - 700020"
+    }
+  ],
+  "panaji": [
+    {
+      "name": "Candolim Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Panaji",
+      "state": "Goa",
+      "address": "Candolim Beach Road, Candolim, Goa - 403515"
+    },
+    {
+      "name": "Valpoi Community Health Centre",
+      "type": "Community Health Centre (CHC)",
+      "district": "Panaji",
+      "state": "Goa",
+      "address": "Valpoi Town, Goa - 403506"
+    },
+    {
+      "name": "Goa Medical College Hospital",
+      "type": "Government General Hospital",
+      "district": "Panaji",
+      "state": "Goa",
+      "address": "Bambolim, Panaji, Goa - 403202"
+    }
+  ],
+  "ranchi": [
+    {
+      "name": "Namkum Primary Health Centre",
+      "type": "Primary Health Centre (PHC)",
+      "district": "Ranchi",
+      "state": "Jharkhand",
+      "address": "Namkum Bazaar, Ranchi, Jharkhand - 834010"
+    },
+    {
+      "name": "Ormanjhi Community Health Centre",
+      "type": "Community Health Centre (CHC)",
+      "district": "Ranchi",
+      "state": "Jharkhand",
+      "address": "Patna Highway, Ormanjhi, Ranchi, Jharkhand - 835219"
+    },
+    {
+      "name": "Rajendra Institute of Medical Sciences",
+      "type": "Government Referral Hospital",
+      "district": "Ranchi",
+      "state": "Jharkhand",
+      "address": "Bariatu Road, Ranchi, Jharkhand - 834009"
+    }
+  ]
+}
