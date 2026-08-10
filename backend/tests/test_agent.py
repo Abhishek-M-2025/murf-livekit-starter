@@ -175,3 +175,86 @@ async def test_no_permission_does_not_save() -> None:
 
         user = db.get_user("default_user")
         assert user is None
+
+
+@pytest.mark.asyncio
+async def test_find_nearest_health_facility_flow() -> None:
+    """Verify that asking for the nearest health centre triggers the tool and speaks the result."""
+    import sqlite3
+
+    conn = sqlite3.connect(db.DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM users WHERE user_id = 'default_user'")
+    conn.commit()
+    conn.close()
+
+    async with (
+        _llm() as llm,
+        AgentSession(llm=llm) as session,
+    ):
+        await session.start(Assistant(session))
+
+        # First query: ask for nearest government health centre
+        result = await session.run(
+            user_input="Mere nearest government health centre kaunsa hai?"
+        )
+
+        # Expect the agent to ask for their district/city/location since it's not in memory
+        await (
+            result.expect.next_event()
+            .is_message(role="assistant")
+            .judge(
+                llm,
+                intent="Asks the user for their district, city, or location.",
+            )
+        )
+        result.expect.no_more_events()
+
+        # User replies with district "Pune"
+        result2 = await session.run(user_input="Pune")
+
+        # Expect the agent to call the tool find_nearest_health_facility and speak the result naturally,
+        # mentioning whether it is from the live database or local fallback dataset.
+        await (
+            result2.expect.next_event()
+            .is_message(role="assistant")
+            .judge(
+                llm,
+                intent="""
+                Provides the details of the health facility in Pune (such as Hinjewadi Primary Health Centre,
+                Aundh District Hospital, or Wagholi Rural Hospital) naturally.
+                Explicitly states whether the source is live government data or a local fallback database.
+                """,
+            )
+        )
+        result2.expect.no_more_events()
+
+
+@pytest.mark.asyncio
+async def test_find_nearest_health_facility_failure_handling() -> None:
+    """Verify the failure/no-result handling when lookup returns no result."""
+    async with (
+        _llm() as llm,
+        AgentSession(llm=llm) as session,
+    ):
+        await session.start(Assistant(session))
+
+        # Ask for health facility in a non-existent/invalid location
+        result = await session.run(
+            user_input="Mere district Atlantis mein nearest PHC kahan hai?"
+        )
+
+        await (
+            result.expect.next_event()
+            .is_message(role="assistant")
+            .judge(
+                llm,
+                intent="""
+                States that it is unable to access the health facility data right now and does not want
+                to give an unverified location, asking the user to try again later.
+                Accepts responses resembling: "I’m unable to access the health facility data right now,
+                so I don’t want to give you an unverified location. Please try again later." or its natural equivalent.
+                """,
+            )
+        )
+        result.expect.no_more_events()
