@@ -26,6 +26,8 @@ from livekit.plugins import (
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 import db
+import health_facility_service
+
 
 
 logger = logging.getLogger("agent")
@@ -61,7 +63,7 @@ def get_user_id(session: AgentSession, user_id: str = "") -> str:
 
 
 class Assistant(Agent):
-    def __init__(self, session: AgentSession) -> None:
+    def __init__(self, session: AgentSession = None) -> None:
         self._session = session
 
         super().__init__(
@@ -173,6 +175,59 @@ class Assistant(Agent):
             f"User details successfully saved "
             f"for ID {resolved_uid}."
         )
+
+    @function_tool
+    async def find_nearest_health_facility(
+        self,
+        context: RunContext,
+        location_or_district: str,
+    ) -> str:
+        """
+        Look up the nearest government health facilities or Primary Health Centres (PHC)
+        in a given location or district.
+
+        Args:
+            location_or_district: The district, city, or location to search for.
+        """
+        logger.info(
+            "Looking up nearest health facilities for location_or_district: %s",
+            location_or_district,
+        )
+
+        try:
+            result = await health_facility_service.get_nearest_facilities(
+                location_or_district
+            )
+
+            source = result.get("source", "none")
+            facilities = result.get("facilities", [])
+
+            if source == "none" or not facilities:
+                return "FAIL: No verified health facilities found or API error."
+
+            # Format the output nicely for LLM digestion
+            # Instruct the LLM to mention the source (live or local) to the user
+            source_desc = (
+                "live database (fetched via government API)"
+                if source == "live"
+                else "local fallback database"
+            )
+
+            output = f"SOURCE_INFO: This data is from the {source_desc}.\n"
+            output += f"FACILITIES_FOUND in {location_or_district.title()}:\n"
+            for idx, fac in enumerate(facilities, 1):
+                output += (
+                    f"{idx}. Name: {fac['name']}\n"
+                    f"   Type: {fac['type']}\n"
+                    f"   District: {fac['district']}\n"
+                    f"   State: {fac['state']}\n"
+                    f"   Address: {fac['address']}\n\n"
+                )
+            return output.strip()
+
+        except Exception as e:
+            logger.exception("Error during nearest health facility lookup")
+            return "FAIL: Exception occurred during lookup."
 
 
 server = AgentServer()
