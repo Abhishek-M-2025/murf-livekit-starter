@@ -2,17 +2,19 @@
 
 Build a production voice AI agent in 5 minutes. Powered by the fastest TTS on the market - swap the system prompt to build anything from customer support to language tutors.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Murf Falcon](https://img.shields.io/badge/TTS-Murf%20Falcon-6366F1)](https://murf.ai/api/docs/text-to-speech/streaming) [![LiveKit](https://img.shields.io/badge/Transport-LiveKit-002cf2)](https://docs.livekit.io) [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+---
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Murf Falcon](https://img.shields.io/badge/TTS-Murf%20Falcon-6366F1)](https://murf.ai/api/docs/text-to-speech/streaming) [![LiveKit](https://img.shields.io/badge/Transport-LiveKit-002cf2)](https://docs.livekit.io) [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript\&logoColor=white)](https://www.typescriptlang.org/) [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python\&logoColor=white)](https://www.python.org/)
 
 ---
 
 ## Why Murf Falcon
 
-- **55ms model latency** - fastest production TTS
-- **130ms time-to-first-audio** across 10+ global regions
-- **$0.01/1000 characters** - up to 10x cheaper than alternatives
-- **150+ voices** across 35+ languages
-- **99.38% pronunciation accuracy**
+* **55ms model latency** - fastest production TTS
+* **130ms time-to-first-audio** across 10+ global regions
+* **$0.01/1000 characters** - up to 10x cheaper than alternatives
+* **150+ voices** across 35+ languages
+* **99.38% pronunciation accuracy**
 
 ---
 
@@ -40,20 +42,22 @@ flowchart LR
 
 ### Prerequisites
 
-- **Python** 3.10+
-- **[uv](https://docs.astral.sh/uv/)** - fast Python package manager
+* **Python** 3.10+
+* **[uv](https://docs.astral.sh/uv/)** - fast Python package manager
+
   ```bash
   # macOS/Linux
   curl -LsSf https://astral.sh/uv/install.sh | sh
   # Windows (PowerShell)
   powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
   ```
-- **Node.js** 18+
-- **pnpm** — fast Node package manager
+* **Node.js** 18+
+* **pnpm** — fast Node package manager
+
   ```bash
   npm install -g pnpm
   ```
-- A [LiveKit](https://cloud.livekit.io/) project (free tier available)
+* A [LiveKit](https://cloud.livekit.io/) project (free tier available)
 
 ### Step 1: Clone the repo
 
@@ -66,14 +70,14 @@ cd murf-livekit-starter
 
 Create `.env.local` in both `backend/` and `frontend/` (copy from `.env.example` in each). You need:
 
-| Variable | Where to get it | Required |
-|----------|-----------------|----------|
-| `LIVEKIT_URL` | LiveKit Cloud dashboard | Yes |
-| `LIVEKIT_API_KEY` | LiveKit Cloud dashboard | Yes |
-| `LIVEKIT_API_SECRET` | LiveKit Cloud dashboard | Yes |
-| `MURF_API_KEY` | [murf.ai/api/dashboard](https://murf.ai/api/dashboard) | Yes |
-| `DEEPGRAM_API_KEY` | [deepgram.com](https://deepgram.com) | Yes |
-| `GOOGLE_API_KEY` (or `OPENAI_API_KEY`) | Depends on LLM choice | Yes |
+| Variable                               | Where to get it                                        | Required |
+| -------------------------------------- | ------------------------------------------------------ | -------- |
+| `LIVEKIT_URL`                          | LiveKit Cloud dashboard                                | Yes      |
+| `LIVEKIT_API_KEY`                      | LiveKit Cloud dashboard                                | Yes      |
+| `LIVEKIT_API_SECRET`                   | LiveKit Cloud dashboard                                | Yes      |
+| `MURF_API_KEY`                         | [murf.ai/api/dashboard](https://murf.ai/api/dashboard) | Yes      |
+| `DEEPGRAM_API_KEY`                     | [deepgram.com](https://deepgram.com)                   | Yes      |
+| `GOOGLE_API_KEY` (or `OPENAI_API_KEY`) | Depends on LLM choice                                  | Yes      |
 
 ### Step 3: Install backend dependencies
 
@@ -134,12 +138,12 @@ Want to deploy this beyond localhost? You'll need to deploy **two services**: th
 
 Set these environment variables in Railway:
 
-- `MURF_API_KEY`
-- `DEEPGRAM_API_KEY`
-- `GOOGLE_API_KEY` or `OPENAI_API_KEY`
-- `LIVEKIT_URL`
-- `LIVEKIT_API_KEY`
-- `LIVEKIT_API_SECRET`
+* `MURF_API_KEY`
+* `DEEPGRAM_API_KEY`
+* `GOOGLE_API_KEY` or `OPENAI_API_KEY`
+* `LIVEKIT_URL`
+* `LIVEKIT_API_KEY`
+* `LIVEKIT_API_SECRET`
 
 The backend runs as a long-lived Python process that connects to LiveKit as an agent. Railway handles this well.
 
@@ -149,10 +153,10 @@ The backend runs as a long-lived Python process that connects to LiveKit as an a
 
 Set these environment variables in Vercel:
 
-- `LIVEKIT_URL`
-- `LIVEKIT_API_KEY`
-- `LIVEKIT_API_SECRET`
-- `AGENT_NAME` (optional — for explicit agent dispatch)
+* `LIVEKIT_URL`
+* `LIVEKIT_API_KEY`
+* `LIVEKIT_API_SECRET`
+* `AGENT_NAME` (optional — for explicit agent dispatch)
 
 The frontend is a standard Next.js app. Point it at the same LiveKit instance your backend agent is connected to.
 
@@ -178,19 +182,19 @@ The default system prompt makes this a **customer support agent**. You can chang
 
 **Customer Support (default):**
 
-```
+```text
 You are a friendly and efficient customer support agent for a tech company. Help users with account issues, billing questions, and product troubleshooting. Be concise, empathetic, and solution-oriented. If you don't know something, say so honestly and offer to escalate.
 ```
 
 **Language Tutor:**
 
-```
+```text
 You are a patient and encouraging language tutor helping the user practice conversational Spanish. Speak primarily in Spanish but switch to English to explain grammar or vocabulary when needed. Correct mistakes gently and suggest better phrasing. Keep conversations natural and fun.
 ```
 
 **AI Receptionist:**
 
-```
+```text
 You are a professional receptionist for a medical clinic. Help callers schedule appointments, answer questions about office hours and services, and take messages for doctors. Be warm but efficient. Ask for the caller's name and reason for calling upfront.
 ```
 
@@ -204,10 +208,10 @@ See the Configuration section below for voice, STT, and LLM options.
 
 Edit the `tts=murf.TTS(...)` call in `backend/src/agent.py`. Set the `voice` argument to any Murf voice ID. Examples:
 
-- `en-US-natalie` — US English (female)
-- `en-UK-ruby` — UK English (female)
-- `en-US-miles` — US English (male)
-- `en-US-matthew` — US English (male, default in this starter)
+* `en-US-natalie` — US English (female)
+* `en-UK-ruby` — UK English (female)
+* `en-US-miles` — US English (male)
+* `en-US-matthew` — US English (male, default in this starter)
 
 Browse all voices: [Murf Voice Library](https://murf.ai/api/docs/voices-styles/voice-library).
 
@@ -217,8 +221,8 @@ STT is configured in `backend/src/agent.py` in the `AgentSession(stt=...)` call.
 
 ### LLM (Gemini vs OpenAI)
 
-- **Gemini (default):** Set `GOOGLE_API_KEY` and use `llm=google.LLM(model="gemini-2.5-flash")` in `agent.py`.
-- **OpenAI:** Set `OPENAI_API_KEY`, add the OpenAI plugin, and use the corresponding `llm=openai.LLM(...)` in `agent.py`.
+* **Gemini (default):** Set `GOOGLE_API_KEY` and use `llm=google.LLM(model="gemini-2.5-flash")` in `agent.py`.
+* **OpenAI:** Set `OPENAI_API_KEY`, add the OpenAI plugin, and use the corresponding `llm=openai.LLM(...)` in `agent.py`.
 
 ### Audio format
 
@@ -228,7 +232,7 @@ Murf Falcon and LiveKit handle audio format internally. For advanced options, se
 
 ## Project Structure
 
-```
+```text
 murf-livekit-starter/
 ├── backend/                 # Python voice agent (LiveKit Agents + Murf Falcon)
 │   ├── src/
@@ -252,39 +256,78 @@ murf-livekit-starter/
 
 For deeper documentation on each part, see:
 
-- [Backend Documentation](./backend/README.md) — agent pipeline, voice/LLM/STT configuration, testing, deployment
-- [Frontend Documentation](./frontend/README.md) — UI customization, visualizers, theming, component architecture
+* [Backend Documentation](./backend/README.md) — agent pipeline, voice/LLM/STT configuration, testing, deployment
+* [Frontend Documentation](./frontend/README.md) — UI customization, visualizers, theming, component architecture
+
+---
 
 ## Day 5: Nearest PHC / Government Health Facility Lookup
 
 As part of the Murf AI "10 Days of Voice Agents – #VoiceForBharat" challenge (Health Access track), Day 5 adds a verified government health facility lookup tool.
 
 ### Features
-- **Tool Added:** `find_nearest_health_facility(location_or_district)` is registered as a function tool.
-- **Persistent Memory Integration:** If the user's district or location is already stored in their profile facts from Day 4, the agent automatically reuses it. Otherwise, it politely prompts the user for their location.
-- **Data Source:**
-  - **Live API:** Connects to the official `data.gov.in` database using the `DATA_GOV_IN_API_KEY` (default resource: `9ef84268-d588-465a-a308-a864a43d0070`).
-  - **Local/Static Fallback:** If the live API is not configured or fails, the agent falls back to a high-fidelity local dataset (`health_facilities.json`) containing real, verified public health facilities across **20 major Indian districts** representing 20 different states and UTs.
-- **Data Freshness:** The voice response states whether the information is retrieved from "live government data" or the "local fallback dataset".
-- **Failure/No-Result Handling:** If both the API and the local database have no record of the location or fail, the agent says: *"I’m unable to access the health facility data right now, so I don’t want to give you an unverified location. Please try again later."* The agent never hallucinates facility names.
+
+* **Tool Added:** `find_nearest_health_facility(location_or_district)` is registered as a function tool.
+
+* **Persistent Memory Integration:** If the user's district or location is already stored in their profile facts from Day 4, the agent automatically reuses it. Otherwise, it politely prompts the user for their location.
+
+* **Data Source:**
+
+  * **Live API:** Connects to the official `data.gov.in` database using the `DATA_GOV_IN_API_KEY` (default resource: `9ef84268-d588-465a-a308-a864a43d0070`).
+  * **Local/Static Fallback:** If the live API is not configured or fails, the agent falls back to a high-fidelity local dataset (`health_facilities.json`) containing real, verified public health facilities across **20 major Indian districts** representing 20 different states and UTs.
+
+  **20 States/UTs Covered:**
+
+  1. Andhra Pradesh
+  2. Assam
+  3. Bihar
+  4. Chhattisgarh
+  5. Gujarat
+  6. Haryana
+  7. Himachal Pradesh
+  8. Jharkhand
+  9. Karnataka
+  10. Kerala
+  11. Madhya Pradesh
+  12. Maharashtra
+  13. Odisha
+  14. Punjab
+  15. Rajasthan
+  16. Tamil Nadu
+  17. Telangana
+  18. Uttar Pradesh
+  19. Uttarakhand
+  20. West Bengal
+
+* **Data Freshness:** The voice response states whether the information is retrieved from "live government data" or the "local fallback dataset".
+
+* **Failure/No-Result Handling:** If both the API and the local database have no record of the location or fail, the agent says: *"I’m unable to access the health facility data right now, so I don’t want to give you an unverified location. Please try again later."* The agent never hallucinates facility names.
 
 ### Environment Variables
+
 To enable live API lookup, add the following variables to `backend/.env.local`:
+
 ```env
 DATA_GOV_IN_API_KEY=your_data_gov_in_api_key_here
 DATA_GOV_IN_RESOURCE_ID=9ef84268-d588-465a-a308-a864a43d0070
 ```
 
 ### Running and Testing
+
 1. Start the LiveKit agent:
+
    ```bash
    cd backend
    uv run python src/agent.py dev
    ```
+
 2. Speak to the agent using the browser UI or console, and ask:
-   - *"Mere nearest government health centre kaunsa hai?"*
-   - *"Mere district mein nearest PHC kahan hai?"*
+
+   * *"Mere nearest government health centre kaunsa hai?"*
+   * *"Mere district mein nearest PHC kahan hai?"*
+
 3. Run the automated tests verifying this behavior:
+
    ```bash
    uv run pytest
    ```
@@ -293,14 +336,14 @@ DATA_GOV_IN_RESOURCE_ID=9ef84268-d588-465a-a308-a864a43d0070
 
 ## Links
 
-- [Murf API Docs](https://murf.ai/api/docs)
-- [Murf Voice Library](https://murf.ai/api/docs/voices-styles/voice-library)
-- [LiveKit Docs](https://docs.livekit.io)
-- [Deepgram Docs](https://developers.deepgram.com)
-- [Murf Falcon Benchmarks](https://murf.ai/falcon/benchmarks)
-- [TTS Latency Benchmarker](https://github.com/sahilsgupta/tts-latency-benchmarker) — run your own p50/p95 tests across providers
-- [Murf Discord](https://discord.gg/FbKAy96Sz7)
-- [Murf Startup Incubator](https://murf.ai/api) — 50M free characters for startups
+* [Murf API Docs](https://murf.ai/api/docs)
+* [Murf Voice Library](https://murf.ai/api/docs/voices-styles/voice-library)
+* [LiveKit Docs](https://docs.livekit.io)
+* [Deepgram Docs](https://developers.deepgram.com)
+* [Murf Falcon Benchmarks](https://murf.ai/falcon/benchmarks)
+* [TTS Latency Benchmarker](https://github.com/sahilsgupta/tts-latency-benchmarker) — run your own p50/p95 tests across providers
+* [Murf Discord](https://discord.gg/FbKAy96Sz7)
+* [Murf Startup Incubator](https://murf.ai/api) — 50M free characters for startups
 
 ---
 
