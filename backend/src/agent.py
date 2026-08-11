@@ -1,7 +1,8 @@
+import json
 import logging
 
 from dotenv import load_dotenv
-from prompt import SYSTEM_PROMPT
+from prompt import SYSTEM_PROMPT, OUTBOUND_SYSTEM_PROMPT
 
 from livekit import rtc
 from livekit.agents import (
@@ -27,7 +28,6 @@ from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 import db
 import health_facility_service
-
 
 
 logger = logging.getLogger("agent")
@@ -63,11 +63,15 @@ def get_user_id(session: AgentSession, user_id: str = "") -> str:
 
 
 class Assistant(Agent):
-    def __init__(self, session: AgentSession = None) -> None:
+    def __init__(
+        self,
+        session: AgentSession = None,
+        instructions: str = SYSTEM_PROMPT,
+    ) -> None:
         self._session = session
 
         super().__init__(
-            instructions=SYSTEM_PROMPT
+            instructions=instructions
         )
 
     @function_tool
@@ -78,11 +82,6 @@ class Assistant(Agent):
     ) -> str:
         """
         Find an existing caller from the SQLite database.
-
-        Args:
-            user_id: Optional unique user ID.
-            If not provided, the LiveKit participant identity
-            will be used automatically.
         """
 
         resolved_uid = get_user_id(
@@ -134,18 +133,6 @@ class Assistant(Agent):
 
         The agent must explicitly ask for permission
         before saving user information.
-
-        Args:
-            name: The caller's name.
-            language_preference:
-                English, Hindi, or Hinglish.
-            facts:
-                Relevant non-sensitive information about
-                the caller.
-            last_interaction:
-                Summary of the latest interaction.
-            user_id:
-                Optional unique user ID.
         """
 
         resolved_uid = get_user_id(
@@ -183,14 +170,14 @@ class Assistant(Agent):
         location_or_district: str,
     ) -> str:
         """
-        Look up the nearest government health facilities or Primary Health Centres (PHC)
-        in a given location or district.
-
-        Args:
-            location_or_district: The district, city, or location to search for.
+        Look up the nearest government health facilities
+        or Primary Health Centres (PHC) in a given location
+        or district.
         """
+
         logger.info(
-            "Looking up nearest health facilities for location_or_district: %s",
+            "Looking up nearest health facilities for "
+            "location_or_district: %s",
             location_or_district,
         )
 
@@ -203,18 +190,27 @@ class Assistant(Agent):
             facilities = result.get("facilities", [])
 
             if source == "none" or not facilities:
-                return "FAIL: No verified health facilities found or API error."
+                return (
+                    "FAIL: No verified health facilities "
+                    "found or API error."
+                )
 
-            # Format the output nicely for LLM digestion
-            # Instruct the LLM to mention the source (live or local) to the user
             source_desc = (
                 "live database (fetched via government API)"
                 if source == "live"
                 else "local fallback database"
             )
 
-            output = f"SOURCE_INFO: This data is from the {source_desc}.\n"
-            output += f"FACILITIES_FOUND in {location_or_district.title()}:\n"
+            output = (
+                f"SOURCE_INFO: This data is from the "
+                f"{source_desc}.\n"
+            )
+
+            output += (
+                f"FACILITIES_FOUND in "
+                f"{location_or_district.title()}:\n"
+            )
+
             for idx, fac in enumerate(facilities, 1):
                 output += (
                     f"{idx}. Name: {fac['name']}\n"
@@ -223,10 +219,14 @@ class Assistant(Agent):
                     f"   State: {fac['state']}\n"
                     f"   Address: {fac['address']}\n\n"
                 )
+
             return output.strip()
 
-        except Exception as e:
-            logger.exception("Error during nearest health facility lookup")
+        except Exception:
+            logger.exception(
+                "Error during nearest health facility lookup"
+            )
+
             return "FAIL: Exception occurred during lookup."
 
 
@@ -243,12 +243,56 @@ server.setup_fnc = prewarm
 @server.rtc_session(agent_name="my-agent")
 async def my_agent(ctx: JobContext):
 
-    # Logging setup
+    # ---------------------------------------------------------
+    # Logging
+    # ---------------------------------------------------------
+
     ctx.log_context_fields = {
         "room": ctx.room.name,
     }
 
-    # Create the voice AI pipeline
+    # ---------------------------------------------------------
+    # Detect outbound Day 6 session
+    # ---------------------------------------------------------
+
+    is_outbound = False
+    user_name = "there"
+
+    try:
+        metadata = ctx.job.metadata
+
+        if metadata:
+            metadata = json.loads(metadata)
+
+            is_outbound = (
+                metadata.get("call_type")
+                == "medication_reminder"
+            )
+
+            user_name = metadata.get(
+                "user_name",
+                "there",
+            )
+
+            logger.info(
+                "Job metadata: %s",
+                metadata,
+            )
+
+    except Exception:
+        logger.exception(
+            "Failed to parse job metadata"
+        )
+
+    logger.info(
+        "Outbound session: %s",
+        is_outbound,
+    )
+
+    # ---------------------------------------------------------
+    # Voice AI pipeline
+    # ---------------------------------------------------------
+
     session = AgentSession(
 
         # Speech-to-text
@@ -282,9 +326,25 @@ async def my_agent(ctx: JobContext):
         preemptive_generation=True,
     )
 
+    # ---------------------------------------------------------
+    # Select prompt
+    # ---------------------------------------------------------
+
+    instructions = (
+        OUTBOUND_SYSTEM_PROMPT
+        if is_outbound
+        else SYSTEM_PROMPT
+    )
+
+    # ---------------------------------------------------------
     # Start the session
+    # ---------------------------------------------------------
+
     await session.start(
-        agent=Assistant(session),
+        agent=Assistant(
+            session=session,
+            instructions=instructions,
+        ),
         room=ctx.room,
         room_options=room_io.RoomOptions(
             audio_input=room_io.AudioInputOptions(
@@ -298,8 +358,68 @@ async def my_agent(ctx: JobContext):
         ),
     )
 
-    # Connect to the LiveKit room
+    # ---------------------------------------------------------
+    # Connect to LiveKit room
+    # ---------------------------------------------------------
+
     await ctx.connect()
+
+    logger.info(
+        "Agent connected to room: %s",
+        ctx.room.name,
+    )
+
+    # ---------------------------------------------------------
+    # DAY 6 — Automatic outbound greeting
+    # ---------------------------------------------------------
+
+    if is_outbound:
+
+        logger.info(
+            "Outbound medication reminder call detected."
+        )
+
+        logger.info(
+            "Waiting for SIP participant to join..."
+        )
+
+        try:
+            participant = await ctx.wait_for_participant()
+
+            logger.info(
+                "SIP participant joined: %s",
+                participant.identity,
+            )
+
+            # Give the SIP connection a short moment
+            # to become fully ready for two-way audio.
+            await asyncio.sleep(0.5)
+
+            logger.info(
+                "Starting automatic outbound greeting..."
+            )
+
+            await session.generate_reply(
+                instructions=(
+                    f"Start the outbound medication reminder call "
+                    f"with the patient named {user_name}. "
+                    "Speak first without waiting for the patient. "
+                    "Introduce yourself as Anisha, explain that "
+                    "this is an automated medication reminder call, "
+                    "ask if this is a good time to talk, and clearly "
+                    "tell the patient they can say stop if they "
+                    "do not want further calls."
+                )
+            )
+
+            logger.info(
+                "Outbound greeting triggered successfully."
+            )
+
+        except Exception:
+            logger.exception(
+                "Failed to start outbound greeting."
+            )
 
 
 if __name__ == "__main__":
