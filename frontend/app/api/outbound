@@ -1,1 +1,45 @@
 
+import { NextResponse } from 'next/server';
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json().catch(() => ({}));
+    
+    // Accept destination and metadata sent from frontend, leaving validation/fallback to the backend
+    const destination = body.destination || undefined;
+    const user_name = body.user_name || undefined;
+    const call_type = body.call_type || undefined;
+    const reminder = body.reminder || undefined;
+    
+    console.log(`Forwarding outbound call request to backend. Destination: ${destination || 'default (backend env)'}`);
+    
+    // Call the Python trigger server running on port 5001
+    const backendRes = await fetch('http://127.0.0.1:5001/call', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        destination,
+        user_name,
+        call_type,
+        reminder,
+      }),
+    });
+    
+    const resData = await backendRes.json().catch(() => ({}));
+    
+    if (!backendRes.ok) {
+      return NextResponse.json(
+        { error: resData.error || 'Failed to trigger outbound call via backend.' },
+        { status: backendRes.status }
+      );
+    }
+    
+    return NextResponse.json(resData);
+  } catch (error) {
+    console.error('Error triggering outbound call:', error);
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
