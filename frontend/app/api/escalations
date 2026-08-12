@@ -1,0 +1,17 @@
+import { execSync } from 'child_process';
+import { NextResponse } from 'next/server';
+
+export async function GET() {
+  try {
+    const result = execSync('uv run python src/get_escalations.py', {
+      cwd: '../backend',
+      encoding: 'utf-8',
+      env: { ...process.env },
+    });
+    const escalations = JSON.parse(result.trim());
+    return NextResponse.json(escalations);
+  } catch (error) {
+    console.error('Error fetching escalations via execSync:', error);
+    return NextResponse.json([]);
+  }
+}
