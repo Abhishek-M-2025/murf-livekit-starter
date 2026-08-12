@@ -229,6 +229,44 @@ class Assistant(Agent):
 
             return "FAIL: Exception occurred during lookup."
 
+    @function_tool
+    async def create_escalation(
+        self,
+        context: RunContext,
+        reason: str,
+        short_summary: str,
+        checked_info: str,
+        urgency: str,
+        language: str,
+        preferred_followup: str = "phone",
+    ) -> str:
+        """
+        Create a human escalation request when the user has serious red-flag symptoms
+        or asks to diagnose a disease, AND they have given explicit consent.
+
+        Args:
+            reason: The main reason/trigger for escalation (e.g., 'Severe chest pain', 'Diagnosis request').
+            short_summary: A brief description of the symptoms or request (e.g., 'Severe chest pain for 30 minutes').
+            checked_info: Safe, relevant details, excluding any private sensitive data (e.g., OTPs, passwords, PINs, card numbers).
+            urgency: The urgency level of the request ('high', 'medium', 'low').
+            language: The language used by the caller ('Hindi', 'English', 'Hinglish').
+            preferred_followup: The preferred followup channel, default 'phone'.
+        """
+        logger.info("create_escalation tool called with reason: %s, urgency: %s", reason, urgency)
+        try:
+            reference_id = db.create_escalation(
+                reason=reason,
+                short_summary=short_summary,
+                checked_info=checked_info,
+                urgency=urgency,
+                language=language,
+                preferred_followup=preferred_followup,
+            )
+            return f"SUCCESS: Escalation created. Reference ID is {reference_id}."
+        except Exception as e:
+            logger.exception("Error in create_escalation tool")
+            return f"FAIL: Could not create escalation. Error: {str(e)}"
+
 
 server = AgentServer()
 
