@@ -38,11 +38,9 @@ flowchart LR
 
 ---
 
-## UI Preview
+## UI Preview: 👇
 
-![Health Access Assistant Dashboard](./frontend/public/dashboard-preview.png)
-
-> **Add your main frontend dashboard screenshot above.** Replace `./frontend/public/dashboard-preview.png` with your actual image path or image link.
+<img width="1916" height="918" alt="Image" src="https://github.com/user-attachments/assets/f17f871f-d1ec-4ee3-b505-9f46d6d13a9f" />
 
 ---
 
