@@ -26,6 +26,31 @@ def init_db():
         )
         """
     )
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS escalations (
+            reference_id TEXT PRIMARY KEY,
+            reason TEXT,
+            short_summary TEXT,
+            checked_info TEXT,
+            urgency TEXT,
+            language TEXT,
+            preferred_followup TEXT,
+            status TEXT,
+            created_at TEXT
+        )
+        """
+    )
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS calls (
+            call_id TEXT PRIMARY KEY,
+            call_type TEXT,
+            status TEXT,
+            created_at TEXT
+        )
+        """
+    )
     conn.commit()
     conn.close()
 
@@ -76,6 +101,131 @@ def save_user_db(
             (user_id, name, language_preference, facts, last_interaction),
         )
         conn.commit()
+    finally:
+        conn.close()
+
+
+def create_escalation(
+    reason: str,
+    short_summary: str,
+    checked_info: str,
+    urgency: str,
+    language: str,
+    preferred_followup: str = "phone",
+) -> str:
+    from datetime import datetime
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    try:
+        # Get date in YYYYMMDD format
+        today_str = datetime.now().strftime("%Y%m%d")
+
+        # Get sequential count for today
+        like_pattern = f"HA-{today_str}-%"
+        cursor.execute(
+            "SELECT COUNT(*) FROM escalations WHERE reference_id LIKE ?",
+            (like_pattern,),
+        )
+        count = cursor.fetchone()[0]
+        seq = count + 1
+        reference_id = f"HA-{today_str}-{seq:03d}"
+
+        created_at = datetime.now().isoformat()
+        status = "OPEN"
+
+        cursor.execute(
+            """
+            INSERT INTO escalations (
+                reference_id, reason, short_summary, checked_info,
+                urgency, language, preferred_followup, status, created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                reference_id,
+                reason,
+                short_summary,
+                checked_info,
+                urgency,
+                language,
+                preferred_followup,
+                status,
+                created_at,
+            ),
+        )
+        conn.commit()
+        logger.info(f"Escalation successfully created: {reference_id}")
+        return reference_id
+    except Exception as e:
+        logger.exception("Failed to insert escalation into DB")
+        raise e
+    finally:
+        conn.close()
+
+
+def create_call(call_id: str, call_type: str, status: str = "failed") -> None:
+    from datetime import datetime
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            INSERT OR IGNORE INTO calls (call_id, call_type, status, created_at)
+            VALUES (?, ?, ?, ?)
+            """,
+            (call_id, call_type, status, datetime.now().isoformat()),
+        )
+        conn.commit()
+        logger.info(f"Call record created: {call_id} ({call_type})")
+    except Exception as e:
+        logger.exception(f"Failed to create call record for {call_id}")
+    finally:
+        conn.close()
+
+
+def update_call_status(call_id: str, status: str) -> None:
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "UPDATE calls SET status = ? WHERE call_id = ?",
+            (status, call_id),
+        )
+        conn.commit()
+        logger.info(f"Call record updated: {call_id} -> {status}")
+    except Exception as e:
+        logger.exception(f"Failed to update call status for {call_id}")
+    finally:
+        conn.close()
+
+
+def get_call_analytics() -> Dict[str, Any]:
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    try:
+        # Safeguard: check if calls table exists
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='calls'")
+        if not cursor.fetchone():
+            return {"total_calls": 0, "successful_calls": 0, "failed_calls": 0}
+
+        cursor.execute("SELECT COUNT(*) FROM calls")
+        total = cursor.fetchone()[0]
+
+        cursor.execute("SELECT COUNT(*) FROM calls WHERE status = 'success'")
+        success = cursor.fetchone()[0]
+
+        cursor.execute("SELECT COUNT(*) FROM calls WHERE status = 'failed'")
+        failed = cursor.fetchone()[0]
+
+        return {
+            "total_calls": total,
+            "successful_calls": success,
+            "failed_calls": failed,
+        }
+    except Exception as e:
+        logger.exception("Failed to get call analytics")
+        return {"total_calls": 0, "successful_calls": 0, "failed_calls": 0}
     finally:
         conn.close()
 
