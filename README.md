@@ -40,21 +40,9 @@ flowchart LR
 
 ## UI Preview
 
-![Health Access Assistant Dashboard](./frontend/public/dashboard-preview.png)
+<img width="1916" height="918" alt="Image" src="https://github.com/user-attachments/assets/f17f871f-d1ec-4ee3-b505-9f46d6d13a9f" />
 
-> Replace `./frontend/public/dashboard-preview.png` with your actual frontend dashboard image path or image link.
-
----
-
-## Day 7: Human Support Escalation
-
-Day 7 adds a **human-support escalation flow** for cases where the voice agent cannot confidently resolve the user's request.
-
-### Features
-
-* The agent can recognize when a conversation needs human assistance.
-* It can politely inform the user that the issue will be escalated to a human support representative.
-* This provides a safe fallback instead of guessing or giving unreliable information.
+> **Add your main frontend dashboard screenshot above.** Replace `./frontend/public/dashboard-preview.png` with your actual image path or image link.
 
 ---
 
@@ -354,15 +342,27 @@ DATA_GOV_IN_RESOURCE_ID=9ef84268-d588-465a-a308-a864a43d0070
 
 ---
 
+## Day 6: Outbound SIP Calling
+
+Day 6 adds **outbound SIP calling**, allowing the voice agent to initiate phone calls and communicate with users through a SIP/telephony connection.
+
+### Features
+
+* The agent can initiate outbound SIP calls.
+* Voice conversations can use the same STT → LLM → Murf Falcon TTS pipeline.
+* This extends the Health Access agent from browser-based conversations to phone-based interactions.
+
+---
+
 ## Day 7: Human Support Escalation
 
 Day 7 adds a **human-support escalation flow** for cases where the voice agent cannot confidently resolve the user's request.
 
 ### Features
 
-* The agent can recognize when a conversation needs human assistance.
-* It can politely inform the user that the issue will be escalated to a human support representative.
-* This provides a safe fallback instead of guessing or giving unreliable information.
+* The agent can identify conversations that require human assistance.
+* It can politely inform the user that the request needs to be escalated.
+* This provides a safe fallback instead of guessing or providing unreliable information.
 
 ---
 
@@ -372,10 +372,10 @@ Day 8 adds a dedicated **frontend dashboard** for the Health Access voice agent.
 
 ### Features
 
-* Displays the voice agent interface and current call/session status.
-* Shows call activity and the outcome of conversations.
-* Provides a simple dashboard view for monitoring successful and failed calls.
-* Designed to make the Health Access agent easier to use and demonstrate.
+* Provides a central dashboard for the voice agent.
+* Displays call/session activity and status.
+* Shows successful and failed call outcomes.
+* Makes the Health Access agent easier to monitor and demonstrate.
 
 ---
 
