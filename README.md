@@ -38,6 +38,26 @@ flowchart LR
 
 ---
 
+## UI Preview
+
+![Health Access Assistant Dashboard](./frontend/public/dashboard-preview.png)
+
+> Replace `./frontend/public/dashboard-preview.png` with your actual frontend dashboard image path or image link.
+
+---
+
+## Day 7: Human Support Escalation
+
+Day 7 adds a **human-support escalation flow** for cases where the voice agent cannot confidently resolve the user's request.
+
+### Features
+
+* The agent can recognize when a conversation needs human assistance.
+* It can politely inform the user that the issue will be escalated to a human support representative.
+* This provides a safe fallback instead of guessing or giving unreliable information.
+
+---
+
 ## Quickstart
 
 ### Prerequisites
@@ -331,6 +351,31 @@ DATA_GOV_IN_RESOURCE_ID=9ef84268-d588-465a-a308-a864a43d0070
    ```bash
    uv run pytest
    ```
+
+---
+
+## Day 7: Human Support Escalation
+
+Day 7 adds a **human-support escalation flow** for cases where the voice agent cannot confidently resolve the user's request.
+
+### Features
+
+* The agent can recognize when a conversation needs human assistance.
+* It can politely inform the user that the issue will be escalated to a human support representative.
+* This provides a safe fallback instead of guessing or giving unreliable information.
+
+---
+
+## Day 8: Health Access Dashboard
+
+Day 8 adds a dedicated **frontend dashboard** for the Health Access voice agent.
+
+### Features
+
+* Displays the voice agent interface and current call/session status.
+* Shows call activity and the outcome of conversations.
+* Provides a simple dashboard view for monitoring successful and failed calls.
+* Designed to make the Health Access agent easier to use and demonstrate.
 
 ---
 
