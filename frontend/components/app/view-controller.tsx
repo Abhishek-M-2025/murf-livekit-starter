@@ -103,7 +103,7 @@ export function ViewController({ appConfig }: ViewControllerProps) {
           audioVisualizerRadialBarCount={appConfig.audioVisualizerRadialBarCount}
           audioVisualizerRadialRadius={appConfig.audioVisualizerRadialRadius}
           audioVisualizerWaveLineWidth={appConfig.audioVisualizerWaveLineWidth}
-          className="fixed inset-0"
+          className="absolute inset-0"
         />
       )}
     </AnimatePresence>
