@@ -38,9 +38,11 @@ flowchart LR
 
 ---
 
-## UI Preview: 👇
+## UI Preview
 
-<img width="1916" height="918" alt="Image" src="https://github.com/user-attachments/assets/f17f871f-d1ec-4ee3-b505-9f46d6d13a9f" />
+![Health Access Assistant Dashboard](./frontend/public/dashboard-preview.png)
+
+> **Add your main frontend dashboard screenshot above.** Replace `./frontend/public/dashboard-preview.png` with your actual image path or image link.
 
 ---
 
@@ -349,6 +351,16 @@ Day 6 adds **outbound SIP calling**, allowing the voice agent to initiate phone 
 * The agent can initiate outbound SIP calls.
 * Voice conversations can use the same STT → LLM → Murf Falcon TTS pipeline.
 * This extends the Health Access agent from browser-based conversations to phone-based interactions.
+
+### Run Outbound Call
+
+From the `backend` directory, run:
+
+```bash
+uv run python src/outbound_call.py
+```
+
+This starts the outbound calling flow configured for the project.
 
 ---
 
