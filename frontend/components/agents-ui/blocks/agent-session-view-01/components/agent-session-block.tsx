@@ -2,7 +2,12 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, type MotionProps, motion } from 'motion/react';
-import { useAgent, useSessionContext, useSessionMessages } from '@livekit/components-react';
+import {
+  useAgent,
+  useParticipants,
+  useSessionContext,
+  useSessionMessages,
+} from '@livekit/components-react';
 import { AgentChatTranscript } from '@/components/agents-ui/agent-chat-transcript';
 import {
   AgentControlBar,
@@ -88,70 +93,41 @@ interface FadeProps {
   className?: string;
 }
 
-export function Fade({ top = false, bottom = false, className }: FadeProps) {
+export function Fade({
+  top = false,
+  bottom = false,
+  className,
+}: FadeProps) {
   return (
     <div
       className={cn(
         'from-background pointer-events-none h-4 bg-linear-to-b to-transparent',
         top && 'bg-linear-to-b',
         bottom && 'bg-linear-to-t',
-        className
+        className,
       )}
     />
   );
 }
 
 export interface AgentSessionView_01Props {
-  /**
-   * Message shown above the controls before the first chat message is sent.
-   *
-   * @default 'Agent is listening, ask it a question'
-   */
   preConnectMessage?: string;
-  /**
-   * Enables or disables the chat toggle and transcript input controls.
-   *
-   * @default true
-   */
   supportsChatInput?: boolean;
-  /**
-   * Enables or disables camera controls in the bottom control bar.
-   *
-   * @default true
-   */
   supportsVideoInput?: boolean;
-  /**
-   * Enables or disables screen sharing controls in the bottom control bar.
-   *
-   * @default true
-   */
   supportsScreenShare?: boolean;
-  /**
-   * Shows a pre-connect buffer state with a shimmer message before messages appear.
-   *
-   * @default true
-   */
   isPreConnectBufferEnabled?: boolean;
 
-  /** Selects the visualizer style rendered in the main tile area. */
   audioVisualizerType?: 'bar' | 'wave' | 'grid' | 'radial' | 'aura';
-  /** Primary hex color used by supported audio visualizer variants. */
+
   audioVisualizerColor?: `#${string}`;
-  /** Hue shift intensity used by certain visualizers. */
   audioVisualizerColorShift?: number;
-  /** Number of bars to render when `audioVisualizerType` is `bar`. */
   audioVisualizerBarCount?: number;
-  /** Number of rows in the visualizer when `audioVisualizerType` is `grid`. */
   audioVisualizerGridRowCount?: number;
-  /** Number of columns in the visualizer when `audioVisualizerType` is `grid`. */
   audioVisualizerGridColumnCount?: number;
-  /** Number of radial bars when `audioVisualizerType` is `radial`. */
   audioVisualizerRadialBarCount?: number;
-  /** Base radius of the radial visualizer when `audioVisualizerType` is `radial`. */
   audioVisualizerRadialRadius?: number;
-  /** Stroke width of the wave path when `audioVisualizerType` is `wave`. */
   audioVisualizerWaveLineWidth?: number;
-  /** Optional class name merged onto the outer `<section>` container. */
+
   className?: string;
 }
 
@@ -171,15 +147,67 @@ export function AgentSessionView_01({
   audioVisualizerRadialBarCount,
   audioVisualizerRadialRadius,
   audioVisualizerWaveLineWidth,
+
   ref,
   className,
   ...props
 }: React.ComponentProps<'section'> & AgentSessionView_01Props) {
   const session = useSessionContext();
   const { messages } = useSessionMessages(session);
+
   const [chatOpen, setChatOpen] = useState(false);
+
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const { state: agentState } = useAgent();
+
+  const agent = useAgent();
+  const agentState = agent.state;
+
+  // =====================================================
+  // ACTIVE AGENT
+  // =====================================================
+  //
+  // useAgent() gives us the agent state, but it is not
+  // the Participant object. Therefore we use useParticipants()
+  // to inspect the actual LiveKit agent participant.
+  //
+  // Backend attributes:
+  // agent_role = main / specialist
+  // agent_name = Anisa / Samar
+  // =====================================================
+
+  const participants = useParticipants();
+
+  const activeAgentParticipant = participants.find(
+    (participant) => participant.isAgent,
+  );
+
+  const backendAgentName =
+    activeAgentParticipant?.attributes?.agent_name ?? '';
+
+  const backendAgentRole =
+    activeAgentParticipant?.attributes?.agent_role ?? '';
+
+  const normalizedAgentName =
+    backendAgentName.trim().toLowerCase();
+
+  const normalizedAgentRole =
+    backendAgentRole.trim().toLowerCase();
+
+  const isSpecialist =
+    normalizedAgentRole === 'specialist' ||
+    normalizedAgentName === 'samar';
+
+  // =====================================================
+  // DISPLAY NAME
+  // =====================================================
+
+  const displayAgentName = isSpecialist
+    ? 'Specialist Samar'
+    : 'Anisa';
+
+  // =====================================================
+  // CONTROLS
+  // =====================================================
 
   const controls: AgentControlBarControls = {
     leave: true,
@@ -189,40 +217,79 @@ export function AgentSessionView_01({
     screenShare: supportsScreenShare,
   };
 
+  // =====================================================
+  // AUTO SCROLL
+  // =====================================================
+
   useEffect(() => {
     const lastMessage = messages.at(-1);
-    const lastMessageIsLocal = lastMessage?.from?.isLocal === true;
 
-    if (scrollAreaRef.current && lastMessageIsLocal) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+    const lastMessageIsLocal =
+      lastMessage?.from?.isLocal === true;
+
+    if (
+      scrollAreaRef.current &&
+      lastMessageIsLocal
+    ) {
+      scrollAreaRef.current.scrollTop =
+        scrollAreaRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // =====================================================
+  // UI
+  // =====================================================
 
   return (
     <section
       ref={ref}
-      className={cn('bg-background relative z-10 h-full w-full overflow-hidden', className)}
+      className={cn(
+        'bg-background relative z-10 h-full w-full overflow-hidden',
+        className,
+      )}
       {...props}
     >
-      {/* Floating status indicator */}
-      <div className="absolute top-6 left-0 w-full flex justify-center z-50 pointer-events-none">
-        <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-teal-100 bg-teal-50/80 text-teal-800 dark:border-teal-900/30 dark:bg-teal-950/40 dark:text-teal-300 backdrop-blur-sm shadow-sm font-semibold text-xs md:text-sm transition-all duration-300 uppercase tracking-wider">
+      {/* =================================================
+          FLOATING STATUS INDICATOR
+          ================================================= */}
+
+      <div className="absolute top-6 left-0 z-50 flex w-full justify-center pointer-events-none">
+        <div className="flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50/80 px-4 py-2 text-xs font-semibold tracking-wider text-teal-800 uppercase shadow-sm backdrop-blur-sm transition-all duration-300 dark:border-teal-900/30 dark:bg-teal-950/40 dark:text-teal-300 md:text-sm">
+
           {agentState === 'speaking' ? (
             <>
-              <span className="animate-pulse">🔊</span>
-              <span>Anisha is speaking</span>
+              <span className="animate-pulse">
+                🔊
+              </span>
+
+              <span>
+                {displayAgentName} is speaking
+              </span>
             </>
           ) : (
             <>
               <span>🎤</span>
-              <span>Listening to you</span>
+
+              <span>
+                Listening to you
+              </span>
             </>
           )}
         </div>
       </div>
 
-      <Fade top className="absolute inset-x-4 top-0 z-10 h-40" />
-      {/* transcript */}
+      {/* =================================================
+          TOP FADE
+          ================================================= */}
+
+      <Fade
+        top
+        className="absolute inset-x-4 top-0 z-10 h-40"
+      />
+
+      {/* =================================================
+          TRANSCRIPT
+          ================================================= */}
 
       <div className="absolute top-0 bottom-[135px] flex w-full flex-col md:bottom-[170px]">
         <AnimatePresence>
@@ -240,25 +307,48 @@ export function AgentSessionView_01({
           )}
         </AnimatePresence>
       </div>
-      {/* Tile layout */}
+
+      {/* =================================================
+          TILE LAYOUT
+          ================================================= */}
+
       <TileLayout
         chatOpen={chatOpen}
         audioVisualizerType={audioVisualizerType}
         audioVisualizerColor={audioVisualizerColor}
-        audioVisualizerColorShift={audioVisualizerColorShift}
-        audioVisualizerBarCount={audioVisualizerBarCount}
-        audioVisualizerRadialBarCount={audioVisualizerRadialBarCount}
-        audioVisualizerRadialRadius={audioVisualizerRadialRadius}
-        audioVisualizerGridRowCount={audioVisualizerGridRowCount}
-        audioVisualizerGridColumnCount={audioVisualizerGridColumnCount}
-        audioVisualizerWaveLineWidth={audioVisualizerWaveLineWidth}
+        audioVisualizerColorShift={
+          audioVisualizerColorShift
+        }
+        audioVisualizerBarCount={
+          audioVisualizerBarCount
+        }
+        audioVisualizerRadialBarCount={
+          audioVisualizerRadialBarCount
+        }
+        audioVisualizerRadialRadius={
+          audioVisualizerRadialRadius
+        }
+        audioVisualizerGridRowCount={
+          audioVisualizerGridRowCount
+        }
+        audioVisualizerGridColumnCount={
+          audioVisualizerGridColumnCount
+        }
+        audioVisualizerWaveLineWidth={
+          audioVisualizerWaveLineWidth
+        }
       />
-      {/* Bottom */}
+
+      {/* =================================================
+          BOTTOM CONTROLS
+          ================================================= */}
+
       <motion.div
         {...BOTTOM_VIEW_MOTION_PROPS}
         className="absolute inset-x-3 bottom-0 z-50 md:inset-x-12"
       >
-        {/* Pre-connect message */}
+        {/* PRE-CONNECT MESSAGE */}
+
         {isPreConnectBufferEnabled && (
           <AnimatePresence>
             {messages.length === 0 && (
@@ -274,8 +364,15 @@ export function AgentSessionView_01({
             )}
           </AnimatePresence>
         )}
+
+        {/* CONTROL BAR */}
+
         <div className="bg-background relative mx-auto max-w-2xl pb-3 md:pb-12">
-          <Fade bottom className="absolute inset-x-0 top-0 h-4 -translate-y-full" />
+          <Fade
+            bottom
+            className="absolute inset-x-0 top-0 h-4 -translate-y-full"
+          />
+
           <AgentControlBar
             variant="livekit"
             controls={controls}
