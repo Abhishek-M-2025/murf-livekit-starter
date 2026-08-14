@@ -99,6 +99,87 @@ def get_user_id(
 
 
 # =========================================================
+# DAY 9 SPECIALIST
+# CLINIC & APPOINTMENT SPECIALIST - SAMAR
+# =========================================================
+
+class ClinicAppointmentSpecialist(Agent):
+
+    def __init__(self, chat_ctx=None) -> None:
+
+        super().__init__(
+            instructions="""
+You are Samar, the Clinic & Appointment Specialist.
+
+Your job is to help the user with specialist appointments,
+clinic appointments, and scheduling visits to health facilities.
+
+You are NOT a doctor and you are NOT a specific medical specialist
+such as a cardiologist. You are the specialist appointment agent.
+
+The main assistant, Anisa, has already spoken with the user before
+transferring the conversation to you.
+
+IMPORTANT:
+
+- Continue from the previous conversation.
+- Do NOT ask the user to repeat information they already provided.
+- First introduce yourself briefly as Samar, the Clinic & Appointment Specialist.
+- Acknowledge the reason for the handoff.
+- If the user has already said which medical specialist they need,
+  do not ask for the specialist type again.
+- If the user only asked to speak with a specialist and has not said
+  which type, ask which medical specialist they want to see.
+- Examples include cardiologist, dermatologist, orthopedist,
+  gynecologist, pediatrician, etc.
+- After knowing the specialist type, ask for the preferred location
+  if it is not already known.
+- Then ask for the preferred appointment date.
+- Then ask for the preferred appointment time if needed.
+- Collect only the information needed to arrange the appointment.
+- Do not claim that an appointment is actually booked unless a real
+  booking system confirms the booking.
+- If no real booking system is available, clearly say that you can
+  help identify and plan the appointment but cannot falsely confirm
+  a booking.
+- Be concise, natural, and professional.
+- Continue in the user's language when possible, including Hindi,
+  Hinglish, or English.
+""",
+            chat_ctx=chat_ctx,
+
+            # Samar's voice
+            tts=murf.TTS(
+                voice="Samar",
+                style="Conversational",
+                model="FALCON",
+                tokenizer=tokenize.basic.SentenceTokenizer(
+                    min_sentence_len=2
+                ),
+                text_pacing=True,
+            ),
+        )
+
+    async def on_enter(self) -> None:
+
+        logger.info(
+            "Clinic & Appointment Specialist Samar is now active."
+        )
+
+        await self.session.generate_reply(
+            instructions=(
+                "Introduce yourself briefly as Samar, the Clinic "
+                "and Appointment Specialist. Tell the user you are "
+                "continuing from Anisa's conversation. Do not ask "
+                "them to repeat what they already said. If the "
+                "medical specialist type is already known from the "
+                "conversation, continue from it. Otherwise ask "
+                "which medical specialist they would like to see."
+            )
+        )
+
+
+# =========================================================
 # ASSISTANT
 # =========================================================
 
@@ -114,6 +195,43 @@ class Assistant(Agent):
 
         super().__init__(
             instructions=instructions
+        )
+
+    # -----------------------------------------------------
+    # DAY 9 HANDOFF
+    # -----------------------------------------------------
+
+    @function_tool
+    async def transfer_to_clinic_specialist(
+        self,
+        context: RunContext,
+    ):
+        """
+        Transfer the user to Samar, the Clinic & Appointment
+        Specialist, when the user needs help with a specialist
+        appointment, clinic appointment, scheduling, or planning
+        a visit to a health facility.
+        """
+
+        logger.info(
+            "DAY 9 HANDOFF: Anisa -> Samar"
+        )
+
+        # Tell the user before switching.
+        await self.session.generate_reply(
+            instructions=(
+                'Say exactly: "I\'ll connect you with our clinic '
+                'and appointment specialist." Keep it brief.'
+            )
+        )
+
+        # Pass the previous conversation to Samar.
+        # Previous system instructions are excluded so Samar uses
+        # his own specialist instructions.
+        return ClinicAppointmentSpecialist(
+            chat_ctx=self.chat_ctx.copy(
+                exclude_instructions=True
+            )
         )
 
     # -----------------------------------------------------
@@ -540,9 +658,6 @@ async def my_agent(ctx: JobContext):
                 and agent_responded
             )
 
-            # Safety net:
-            # successful escalation or facility lookup
-            # also counts as a successful call.
             if facility_lookup or has_escalated:
                 success = True
 
