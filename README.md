@@ -386,6 +386,17 @@ Day 8 adds a dedicated **frontend dashboard** for the Health Access voice agent.
 * Makes the Health Access agent easier to monitor and demonstrate.
 
 ---
+## Day 9: Agent Handoff & Analytics
+
+Day 9 adds **agent handoff and analytics** to the Health Access voice agent.
+
+### Features
+
+* **Agent Handoff:** The agent can transfer conversations to a specialized agent when the current agent cannot handle the user's request.
+* **Call Analytics:** The dashboard tracks call outcomes and displays analytics for successful, failed, and escalated calls.
+* **Escalation Tracking:** Human-support escalations are recorded and shown in the dashboard.
+* **Improved Dashboard:** Added dedicated analytics, escalation, and outbound call views for monitoring agent activity.
+
 
 ## Links
 
