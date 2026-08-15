@@ -57,7 +57,9 @@ flowchart LR
     style K fill:#0F6E56,stroke:#5DCAA5,color:#fff
 ```
 ---
+
 <img width="1536" height="1024" alt="Image" src="https://github.com/user-attachments/assets/dacfaa05-71f7-4a48-9d3a-da7ea02649b2" />
+
 ---
 
 # 🚀 My 10-Day Build Journey
