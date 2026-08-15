@@ -1,416 +1,663 @@
-# Voice Agent Starter — Powered by Murf Falcon
+# 🩺 Aarogya Sahayak — Powered by Murf Falcon
 
-Build a production voice AI agent in 5 minutes. Powered by the fastest TTS on the market - swap the system prompt to build anything from customer support to language tutors.
+A **Voice-First Health Access Assistant** built during the **Murf AI 10 Days of Voice Agents – #VoiceForBharat** challenge.
 
----
+Aarogya Sahayak combines real-time voice AI, persistent memory, health-facility lookup, SIP calling, human escalation, agent handoff, analytics, and a dedicated dashboard.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Murf Falcon](https://img.shields.io/badge/TTS-Murf%20Falcon-6366F1)](https://murf.ai/api/docs/text-to-speech/streaming) [![LiveKit](https://img.shields.io/badge/Transport-LiveKit-002cf2)](https://docs.livekit.io) [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript\&logoColor=white)](https://www.typescriptlang.org/) [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python\&logoColor=white)](https://www.python.org/)
-
----
-
-## Why Murf Falcon
-
-* **55ms model latency** - fastest production TTS
-* **130ms time-to-first-audio** across 10+ global regions
-* **$0.01/1000 characters** - up to 10x cheaper than alternatives
-* **150+ voices** across 35+ languages
-* **99.38% pronunciation accuracy**
+**Languages:** Hindi • Hinglish • English
 
 ---
 
-## Architecture
+## 🛠️ Tech Stack
 
-```mermaid
-flowchart LR
-    A[🎙️ User speaks] -->|audio| B[Deepgram STT]
-    B -->|text| C[LLM]
-    C -->|response text| D[Murf Falcon TTS]
-    D -->|audio| E[LiveKit]
-    E -->|stream| F[🔊 User hears]
-
-    style A fill:#444441,stroke:#888780,color:#fff
-    style B fill:#185FA5,stroke:#85B7EB,color:#fff
-    style C fill:#534AB7,stroke:#AFA9EC,color:#fff
-    style D fill:#0F6E56,stroke:#5DCAA5,color:#fff
-    style E fill:#D85A30,stroke:#F0997B,color:#fff
-    style F fill:#444441,stroke:#888780,color:#fff
-```
+* ⚡ **LiveKit** — real-time voice transport
+* 📝 **Deepgram** — Speech-to-Text
+* 🧠 **Gemini** — reasoning / LLM
+* 🔊 **Murf Falcon** — Text-to-Speech
+* 🗄️ **SQLite** — database and persistence
+* 📞 **SIP / Linphone** — telephony
+* 🖥️ **Next.js / React** — frontend dashboard
+* 🐍 **Python** — voice agent backend
 
 ---
 
-## UI Preview: 👇
+## 🖥️ UI Preview
 
 <img width="1916" height="918" alt="Image" src="https://github.com/user-attachments/assets/f17f871f-d1ec-4ee3-b505-9f46d6d13a9f" />
 
 ---
 
-## Quickstart
+## ⚡ Architecture
 
-### Prerequisites
+```mermaid id="h8c3q1"
+flowchart LR
+    A[👤 User] --> B[🎙️ Voice Input]
+    B --> C[⚡ LiveKit]
+    C --> D[📝 Deepgram STT]
+    D --> E[🧠 Gemini]
+    E --> F[🛠️ Tools + Memory + Escalation]
+    F --> G[🔊 Murf Falcon]
+    G --> H[🎧 Voice Response]
 
-* **Python** 3.10+
-* **[uv](https://docs.astral.sh/uv/)** - fast Python package manager
+    I[📞 SIP / Linphone] --> C
 
-  ```bash
-  # macOS/Linux
-  curl -LsSf https://astral.sh/uv/install.sh | sh
-  # Windows (PowerShell)
-  powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-  ```
-* **Node.js** 18+
-* **pnpm** — fast Node package manager
+    F --> J[🗄️ SQLite]
+    J --> K[📊 Analytics]
 
-  ```bash
-  npm install -g pnpm
-  ```
-* A [LiveKit](https://cloud.livekit.io/) project (free tier available)
-
-### Step 1: Clone the repo
-
-```bash
-git clone https://github.com/murf-ai/murf-livekit-starter.git
-cd murf-livekit-starter
+    style A fill:#444441,stroke:#888780,color:#fff
+    style B fill:#444441,stroke:#888780,color:#fff
+    style C fill:#D85A30,stroke:#F0997B,color:#fff
+    style D fill:#185FA5,stroke:#85B7EB,color:#fff
+    style E fill:#534AB7,stroke:#AFA9EC,color:#fff
+    style F fill:#854F0B,stroke:#FAC775,color:#fff
+    style G fill:#0F6E56,stroke:#5DCAA5,color:#fff
+    style H fill:#444441,stroke:#888780,color:#fff
+    style I fill:#5E5E5E,stroke:#AFAFAF,color:#fff
+    style J fill:#534AB7,stroke:#AFA9EC,color:#fff
+    style K fill:#0F6E56,stroke:#5DCAA5,color:#fff
 ```
+<img width="1536" height="1024" alt="Image" src="https://github.com/user-attachments/assets/dacfaa05-71f7-4a48-9d3a-da7ea02649b2" />
+---
 
-### Step 2: Set up environment variables
+# 🚀 My 10-Day Build Journey
 
-Create `.env.local` in both `backend/` and `frontend/` (copy from `.env.example` in each). You need:
-
-| Variable                               | Where to get it                                        | Required |
-| -------------------------------------- | ------------------------------------------------------ | -------- |
-| `LIVEKIT_URL`                          | LiveKit Cloud dashboard                                | Yes      |
-| `LIVEKIT_API_KEY`                      | LiveKit Cloud dashboard                                | Yes      |
-| `LIVEKIT_API_SECRET`                   | LiveKit Cloud dashboard                                | Yes      |
-| `MURF_API_KEY`                         | [murf.ai/api/dashboard](https://murf.ai/api/dashboard) | Yes      |
-| `DEEPGRAM_API_KEY`                     | [deepgram.com](https://deepgram.com)                   | Yes      |
-| `GOOGLE_API_KEY` (or `OPENAI_API_KEY`) | Depends on LLM choice                                  | Yes      |
-
-### Step 3: Install backend dependencies
-
-```bash
-cd backend
-uv sync
-uv run python src/agent.py download-files
-```
-
-### Step 4: Install frontend dependencies
-
-```bash
-cd frontend
-pnpm install
-```
-
-### Step 5: Run it
-
-**Option A - All-in-one (from repo root):**
-
-```bash
-# macOS/Linux
-chmod +x start_app.sh
-./start_app.sh
-
-# Windows (PowerShell)
-.\start_app.ps1
-```
-
-**Option B - Separate terminals:**
-
-```bash
-# Terminal 1 — LiveKit Server
-livekit-server --dev
-
-# Terminal 2 — Backend agent
-cd backend && uv run python src/agent.py dev
-
-# Terminal 3 — Frontend
-cd frontend && pnpm dev
-```
-
-Then open **http://localhost:3000** in your browser.
-
-You should now see the voice agent UI. Click **Start talking**, allow microphone access, and speak — the agent will respond with Murf Falcon TTS. Ensure your backend and (if using Option B) LiveKit server are running.
+The project evolved from a basic real-time voice agent into a complete **Health Access Voice Assistant** over 10 days.
 
 ---
 
-## Deploy
+## Day 1 — 🎙️ Voice Agent Foundation
 
-Want to deploy this beyond localhost? You'll need to deploy **two services**: the backend agent and the frontend. Both must use the same LiveKit project.
+Started by building the core real-time voice pipeline.
 
-> This is a two-service app — the backend agent and the frontend UI deploy separately. You'll need both running and connected to the same LiveKit project.
-
-### Backend (Python agent) — Deploy to Railway
-
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/tIVCF1?referralCode=cNjn2P&utm_medium=integration&utm_source=template&utm_campaign=generic)
-
-Set these environment variables in Railway:
-
-* `MURF_API_KEY`
-* `DEEPGRAM_API_KEY`
-* `GOOGLE_API_KEY` or `OPENAI_API_KEY`
-* `LIVEKIT_URL`
-* `LIVEKIT_API_KEY`
-* `LIVEKIT_API_SECRET`
-
-The backend runs as a long-lived Python process that connects to LiveKit as an agent. Railway handles this well.
-
-### Frontend (Next.js) — Deploy to Vercel
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/murf-ai/murf-livekit-starter&root-directory=frontend&env=LIVEKIT_URL,LIVEKIT_API_KEY,LIVEKIT_API_SECRET&project-name=murf-voice-agent&repository-name=murf-voice-agent)
-
-Set these environment variables in Vercel:
-
-* `LIVEKIT_URL`
-* `LIVEKIT_API_KEY`
-* `LIVEKIT_API_SECRET`
-* `AGENT_NAME` (optional — for explicit agent dispatch)
-
-The frontend is a standard Next.js app. Point it at the same LiveKit instance your backend agent is connected to.
-
-### Connecting them
-
-The frontend and backend don't call each other directly — they both connect to **LiveKit**, which handles the real-time audio transport.
-
-1. Use the **same** `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET` on both Railway and Vercel
-2. Set `AGENT_NAME=my-agent` on Vercel — this matches the `agent_name="my-agent"` registered in `backend/src/agent.py`
-3. Verify: Railway logs should show the agent connected to LiveKit. Open your Vercel URL, click **Start talking** — the agent should respond
-
-If the agent doesn't connect, double-check that both services point to the same LiveKit project and that the backend is running (check Railway logs).
+* Integrated **LiveKit** for real-time audio communication.
+* Added **Deepgram STT** for converting speech into text.
+* Added **Gemini** for reasoning and **Murf Falcon** for voice responses.
+* Built the first working STT → LLM → TTS conversation flow.
 
 ---
 
-## Change the Use Case
+## Day 2 — 🩺 Health Access Assistant
 
-The default system prompt makes this a **customer support agent**. You can change the agent’s behavior by editing the prompt.
+The generic voice agent was transformed into a health-focused assistant.
 
-**Where the prompt lives:** `backend/src/agent.py`- the `SYSTEM_PROMPT` constant (near the top of the file, after the imports). Change that string to change what your voice agent does.
-
-### Example prompts (copy-paste)
-
-**Customer Support (default):**
-
-```text
-You are a friendly and efficient customer support agent for a tech company. Help users with account issues, billing questions, and product troubleshooting. Be concise, empathetic, and solution-oriented. If you don't know something, say so honestly and offer to escalate.
-```
-
-**Language Tutor:**
-
-```text
-You are a patient and encouraging language tutor helping the user practice conversational Spanish. Speak primarily in Spanish but switch to English to explain grammar or vocabulary when needed. Correct mistakes gently and suggest better phrasing. Keep conversations natural and fun.
-```
-
-**AI Receptionist:**
-
-```text
-You are a professional receptionist for a medical clinic. Help callers schedule appointments, answer questions about office hours and services, and take messages for doctors. Be warm but efficient. Ask for the caller's name and reason for calling upfront.
-```
-
-See the Configuration section below for voice, STT, and LLM options.
+* Created the Health Access system prompt and conversation behavior.
+* Added support for **Hindi, Hinglish, and English** interactions.
+* Focused responses around health-access and assistance use cases.
+* Improved the assistant's tone to be simple, conversational, and user-friendly.
 
 ---
 
-## Configuration
+## Day 3 — 🧠 Persistent Memory
 
-### Murf voice
+Added memory so the assistant could remember useful user information.
 
-Edit the `tts=murf.TTS(...)` call in `backend/src/agent.py`. Set the `voice` argument to any Murf voice ID. Examples:
-
-* `en-US-natalie` — US English (female)
-* `en-UK-ruby` — UK English (female)
-* `en-US-miles` — US English (male)
-* `en-US-matthew` — US English (male, default in this starter)
-
-Browse all voices: [Murf Voice Library](https://murf.ai/api/docs/voices-styles/voice-library).
-
-### STT provider
-
-STT is configured in `backend/src/agent.py` in the `AgentSession(stt=...)` call. The default is Deepgram (`deepgram.STT(model="nova-3")`). You can swap to another LiveKit-compatible STT plugin if needed.
-
-### LLM (Gemini vs OpenAI)
-
-* **Gemini (default):** Set `GOOGLE_API_KEY` and use `llm=google.LLM(model="gemini-2.5-flash")` in `agent.py`.
-* **OpenAI:** Set `OPENAI_API_KEY`, add the OpenAI plugin, and use the corresponding `llm=openai.LLM(...)` in `agent.py`.
-
-### Audio format
-
-Murf Falcon and LiveKit handle audio format internally. For advanced options, see [Murf API docs](https://murf.ai/api/docs) and [LiveKit docs](https://docs.livekit.io).
+* Implemented persistent user/profile facts.
+* Stored useful information such as location and preferences.
+* Connected memory with the voice-agent conversation.
+* Reduced the need to repeatedly ask users for the same information.
 
 ---
 
-## Project Structure
+## Day 4 — 👤 Personalized Conversations
 
-```text
-murf-livekit-starter/
-├── backend/                 # Python voice agent (LiveKit Agents + Murf Falcon)
-│   ├── src/
-│   │   └── agent.py         # Agent entrypoint, pipeline (STT/LLM/TTS), system prompt
-│   ├── tests/               # Agent tests
-│   ├── .env.example         # Backend env template
-│   ├── pyproject.toml       # Python deps (uv)
-│   └── railway.toml         # Railway deploy config
-├── frontend/                # Next.js UI for voice sessions
-│   ├── app/
-│   │   ├── page.tsx         # Main page
-│   │   └── api/token/       # LiveKit token endpoint (dev)
-│   ├── components/          # UI (agents-ui, app config, theme)
-│   ├── app-config.ts        # Branding, title, button text, accent
-│   ├── .env.example         # Frontend env template
-│   └── package.json         # Node deps (pnpm)
-├── start_app.sh             # Start LiveKit + backend + frontend (macOS/Linux)
-├── start_app.ps1            # Start LiveKit + backend + frontend (Windows)
-├── README.md                # This file
-```
+Memory was connected more deeply with the agent's decision-making.
 
-For deeper documentation on each part, see:
-
-* [Backend Documentation](./backend/README.md) — agent pipeline, voice/LLM/STT configuration, testing, deployment
-* [Frontend Documentation](./frontend/README.md) — UI customization, visualizers, theming, component architecture
+* The assistant could reuse stored user information during conversations.
+* Added more personalized responses based on previous context.
+* Reduced repetitive questions and improved conversation continuity.
+* Prepared the memory layer for upcoming health-access tools.
 
 ---
 
-## Day 5: Nearest PHC / Government Health Facility Lookup
+## Day 5 — 🏥 Government Health Facility Lookup
 
-As part of the Murf AI "10 Days of Voice Agents – #VoiceForBharat" challenge (Health Access track), Day 5 adds a verified government health facility lookup tool.
+Added a function tool to help users find nearby government health facilities.
 
-### Features
+* Added `find_nearest_health_facility(location_or_district)`.
+* Integrated the official **data.gov.in** API with a local fallback dataset.
+* Connected the tool with persistent memory so stored districts can be reused.
+* Added safe handling so the agent never invents an unverified facility.
 
-* **Tool Added:** `find_nearest_health_facility(location_or_district)` is registered as a function tool.
+### 🌐 20 States / UTs Covered
 
-* **Persistent Memory Integration:** If the user's district or location is already stored in their profile facts from Day 4, the agent automatically reuses it. Otherwise, it politely prompts the user for their location.
-
-* **Data Source:**
-
-  * **Live API:** Connects to the official `data.gov.in` database using the `DATA_GOV_IN_API_KEY` (default resource: `9ef84268-d588-465a-a308-a864a43d0070`).
-  * **Local/Static Fallback:** If the live API is not configured or fails, the agent falls back to a high-fidelity local dataset (`health_facilities.json`) containing real, verified public health facilities across **20 major Indian districts** representing 20 different states and UTs.
-
-  **20 States/UTs Covered:**
-
-  1. Andhra Pradesh
-  2. Assam
-  3. Bihar
-  4. Chhattisgarh
-  5. Gujarat
-  6. Haryana
-  7. Himachal Pradesh
-  8. Jharkhand
-  9. Karnataka
-  10. Kerala
-  11. Madhya Pradesh
-  12. Maharashtra
-  13. Odisha
-  14. Punjab
-  15. Rajasthan
-  16. Tamil Nadu
-  17. Telangana
-  18. Uttar Pradesh
-  19. Uttarakhand
-  20. West Bengal
-
-* **Data Freshness:** The voice response states whether the information is retrieved from "live government data" or the "local fallback dataset".
-
-* **Failure/No-Result Handling:** If both the API and the local database have no record of the location or fail, the agent says: *"I’m unable to access the health facility data right now, so I don’t want to give you an unverified location. Please try again later."* The agent never hallucinates facility names.
+1. Andhra Pradesh
+2. Assam
+3. Bihar
+4. Chhattisgarh
+5. Gujarat
+6. Haryana
+7. Himachal Pradesh
+8. Jharkhand
+9. Karnataka
+10. Kerala
+11. Madhya Pradesh
+12. Maharashtra
+13. Odisha
+14. Punjab
+15. Rajasthan
+16. Tamil Nadu
+17. Telangana
+18. Uttar Pradesh
+19. Uttarakhand
+20. West Bengal
 
 ### Environment Variables
 
-To enable live API lookup, add the following variables to `backend/.env.local`:
-
-```env
+```env id="6w6h2d"
 DATA_GOV_IN_API_KEY=your_data_gov_in_api_key_here
 DATA_GOV_IN_RESOURCE_ID=9ef84268-d588-465a-a308-a864a43d0070
 ```
 
-### Running and Testing
+Example questions:
 
-1. Start the LiveKit agent:
+```text id="b9d9q3"
+"Mere nearest government health centre kaunsa hai?"
 
-   ```bash
-   cd backend
-   uv run python src/agent.py dev
-   ```
-
-2. Speak to the agent using the browser UI or console, and ask:
-
-   * *"Mere nearest government health centre kaunsa hai?"*
-   * *"Mere district mein nearest PHC kahan hai?"*
-
-3. Run the automated tests verifying this behavior:
-
-   ```bash
-   uv run pytest
-   ```
+"Mere district mein nearest PHC kahan hai?"
+```
 
 ---
 
-## Day 6: Outbound SIP Calling
+## Day 6 — 📞 Outbound SIP Calling
 
-Day 6 adds **outbound SIP calling**, allowing the voice agent to initiate phone calls and communicate with users through a SIP/telephony connection.
+Extended the assistant from browser conversations to phone-based communication.
 
-### Features
+* Added **outbound SIP calling** using the LiveKit telephony flow.
+* Added SIP / Linphone support for phone-based interactions.
+* Reused the same Deepgram → Gemini → Murf Falcon pipeline.
+* Prepared the system for real-world health-access calls and reminders.
 
-* The agent can initiate outbound SIP calls.
-* Voice conversations can use the same STT → LLM → Murf Falcon TTS pipeline.
-* This extends the Health Access agent from browser-based conversations to phone-based interactions.
+Run:
 
-### Run Outbound Call
-
-From the `backend` directory, run:
-
-```bash
+```bash id="c2q6oa"
+cd backend
 uv run python src/outbound_call.py
 ```
 
-This starts the outbound calling flow configured for the project.
+---
+
+## Day 7 — 🧑‍💼 Human Support Escalation
+
+Added a safe human-support fallback for situations where AI should not continue alone.
+
+* Added escalation detection and handling.
+* Created a dedicated escalation workflow.
+* The agent can inform users when human assistance is required.
+* Prevents the assistant from guessing when a request needs human intervention.
+
+Main backend file:
+
+```text id="1af4lj"
+backend/src/escalation.py
+```
 
 ---
 
-## Day 7: Human Support Escalation
+## Day 8 — 📊 Health Access Dashboard
 
-Day 7 adds a **human-support escalation flow** for cases where the voice agent cannot confidently resolve the user's request.
+Built a dedicated dashboard to monitor the voice-agent system.
 
-### Features
+* Added call and session activity.
+* Added call status and outcome information.
+* Added successful, failed, and escalated call views.
+* Created a central interface for demonstrating and monitoring the project.
 
-* The agent can identify conversations that require human assistance.
-* It can politely inform the user that the request needs to be escalated.
-* This provides a safe fallback instead of guessing or providing unreliable information.
+Global frontend styling:
+
+```text id="5h0h7q"
+frontend/app/style/global.css
+```
+
+---
+
+## Day 9 — 🔄 Agent Handoff & Analytics
+
+Added specialized agent handoff and analytics capabilities.
+
+* Added **agent handoff** for requests that need a specialized agent.
+* Added tracking for successful, failed, escalated, and outbound calls.
+* Added analytics processing through `get_analytics.py`.
+* Added a dedicated human-support interface for escalation workflows.
+
+Important files:
+
+```text id="7n1t5x"
+backend/src/get_analytics.py
+backend/src/escalation.py
+frontend/app/human-support-cart.tsx
+```
 
 ---
 
-## Day 8: Health Access Dashboard
+## Day 10 — 🚀Final Integration & Sharing the Journey
 
-Day 8 adds a dedicated **frontend dashboard** for the Health Access voice agent.
+The final day focused on bringing the entire system together.
 
-### Features
+* Connected voice, memory, tools, SIP, escalation, handoff, and analytics.
+* Tested the complete browser and telephony workflows.
+* Refined the Health Access dashboard and user experience.
+* Finalized the project documentation and prepared the complete demo.
 
-* Provides a central dashboard for the voice agent.
-* Displays call/session activity and status.
-* Shows successful and failed call outcomes.
-* Makes the Health Access agent easier to monitor and demonstrate.
+### Final Voice Flow
+
+```text id="n3o5f8"
+👤 User
+   ↓
+🎙️ Voice Input
+   ↓
+⚡ LiveKit
+   ↓
+📝 Deepgram STT
+   ↓
+🧠 Gemini Reasoning
+   ↓
+🛠️ Tools + Memory + Escalation
+   ↓
+🔊 Murf Falcon TTS
+   ↓
+🎧 Voice Response
+```
 
 ---
-## Day 9: Agent Handoff & Analytics
 
-Day 9 adds **agent handoff and analytics** to the Health Access voice agent.
+# ✨ Core Features
 
-### Features
+### 🎙️ Voice-First Interaction
 
-* **Agent Handoff:** The agent can transfer conversations to a specialized agent when the current agent cannot handle the user's request.
-* **Call Analytics:** The dashboard tracks call outcomes and displays analytics for successful, failed, and escalated calls.
-* **Escalation Tracking:** Human-support escalations are recorded and shown in the dashboard.
-* **Improved Dashboard:** Added dedicated analytics, escalation, and outbound call views for monitoring agent activity.
+Natural conversations in **Hindi, Hinglish, and English**.
 
+### 🧠 Persistent Memory
 
-## Links
+Stores and reuses useful user context across conversations.
+
+### 🏥 Health Facility Lookup
+
+Uses government data with a local fallback for verified health-facility information.
+
+### 📞 SIP Telephony
+
+Supports outbound phone conversations through SIP / Linphone.
+
+### 🧑‍💼 Human Escalation
+
+Safely moves conversations to human support when required.
+
+### 🔄 Agent Handoff
+
+Transfers requests to specialized agents when necessary.
+
+### 📊 Call Analytics
+
+Tracks:
+
+* Successful calls
+* Failed calls
+* Escalations
+* Outbound calls
+* Call outcomes
+
+---
+
+# 🗄️ Database
+
+Aarogya Sahayak uses **SQLite** for lightweight application persistence.
+
+It stores information required for:
+
+* User/profile data
+* Call information
+* Escalation records
+* Analytics-related data
+
+Analytics processing:
+
+```text id="f7t9kn"
+backend/src/get_analytics.py
+```
+
+SQLite can later be migrated to PostgreSQL for larger-scale production deployment.
+
+---
+
+# 🧑‍💼 Human Support
+
+### Backend Escalation
+
+```text id="7n5x4z"
+backend/src/escalation.py
+```
+
+Handles the logic for identifying and processing human-support escalation.
+
+### Frontend Support UI
+
+```text id="6f0j9n"
+frontend/app/human-support-cart.tsx
+```
+
+Provides the interface for human-support workflows.
+
+### Global Styling
+
+```text id="w4g7te"
+frontend/app/style/global.css
+```
+
+---
+
+# ⚡ Why Murf Falcon
+
+* **55ms model latency**
+* **130ms time-to-first-audio**
+* **$0.01/1000 characters**
+* **150+ voices**
+* **35+ languages**
+* **99.38% pronunciation accuracy**
+
+---
+
+# 🛠️ Quickstart
+
+## Prerequisites
+
+* Python **3.10+**
+* Node.js **18+**
+* `uv`
+* `pnpm`
+* LiveKit project
+
+### Install uv
+
+```bash id="5g3f8c"
+# macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Windows PowerShell:
+
+```powershell id="2f4d8g"
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+### Install pnpm
+
+```bash id="w7b2hx"
+npm install -g pnpm
+```
+
+---
+
+## 1. Clone the Repository
+
+```bash id="e4n0d7"
+git clone https://github.com/murf-ai/murf-livekit-starter.git
+cd murf-livekit-starter
+```
+
+---
+
+## 2. Environment Variables
+
+Create `.env.local` in `backend/` and `frontend/`.
+
+```env id="1w7d0v"
+LIVEKIT_URL=your_livekit_url
+LIVEKIT_API_KEY=your_livekit_api_key
+LIVEKIT_API_SECRET=your_livekit_api_secret
+MURF_API_KEY=your_murf_api_key
+DEEPGRAM_API_KEY=your_deepgram_api_key
+GOOGLE_API_KEY=your_google_api_key
+```
+
+For health facility lookup:
+
+```env id="x4r3cm"
+DATA_GOV_IN_API_KEY=your_data_gov_in_api_key
+DATA_GOV_IN_RESOURCE_ID=9ef84268-d588-465a-a308-a864a43d0070
+```
+
+---
+
+## 3. Install Backend
+
+```bash id="7d2g5p"
+cd backend
+uv sync
+```
+
+---
+
+## 4. Install Frontend
+
+```bash id="j4v8n2"
+cd frontend
+pnpm install
+```
+
+---
+
+## 5. Run the Project
+
+### All-in-One
+
+```bash id="p8z6jc"
+# macOS/Linux
+chmod +x start_app.sh
+./start_app.sh
+
+# Windows
+.\start_app.ps1
+```
+
+### Or Run Separately
+
+**Terminal 1 — LiveKit**
+
+```bash id="s3d7hm"
+livekit-server --dev
+```
+
+**Terminal 2 — Backend**
+
+```bash id="f6x2jp"
+cd backend
+uv run python src/agent.py dev
+```
+
+**Terminal 3 — Frontend**
+
+```bash id="k1w5zr"
+cd frontend
+pnpm dev
+```
+
+Open:
+
+```text id="q8s2tm"
+http://localhost:3000
+```
+
+Click **Start talking**, allow microphone access, and start the conversation.
+
+---
+
+# 📞 Run Outbound SIP
+
+```bash id="9c7j4m"
+cd backend
+uv run python src/outbound_call.py
+```
+
+Flow:
+
+```text id="8w4q9v"
+📞 SIP / Linphone
+      ↓
+⚡ LiveKit
+      ↓
+🤖 Agent
+      ↓
+🧠 Gemini
+      ↓
+🔊 Murf Falcon
+      ↓
+🎧 Voice Response
+```
+
+---
+
+# 🧪 Testing
+
+Run backend tests:
+
+```bash id="r2m8z6"
+cd backend
+uv run pytest
+```
+
+---
+
+# 📁 Project Structure
+
+```text id="3v8n1k"
+aarogya-sahayak/
+│
+├── backend/
+│   ├── src/
+│   │   ├── agent.py
+│   │   ├── outbound_call.py
+│   │   ├── escalation.py
+│   │   ├── get_analytics.py
+│   │   └── ...
+│   │
+│   ├── tests/
+│   ├── health_facilities.json
+│   ├── database.sqlite
+│   ├── .env.example
+│   └── pyproject.toml
+│
+├── frontend/
+│   ├── app/
+│   │   ├── page.tsx
+│   │   ├── human-support-cart.tsx
+│   │   ├── api/
+│   │   └── style/
+│   │       └── global.css
+│   │
+│   ├── components/
+│   ├── app-config.ts
+│   ├── .env.example
+│   └── package.json
+│
+├── start_app.sh
+├── start_app.ps1
+└── README.md
+```
+
+---
+
+# ⚙️ Configuration
+
+### Murf Falcon
+
+Configured in:
+
+```text id="3g8w5s"
+backend/src/agent.py
+```
+
+```python id="k6y4c2"
+tts=murf.TTS(...)
+```
+
+### Deepgram
+
+```python id="4n8r2q"
+deepgram.STT(model="nova-3")
+```
+
+### Gemini
+
+```python id="5k2m9a"
+llm=google.LLM(model="gemini-2.5-flash")
+```
+
+---
+
+# 🚀 Deployment
+
+The application can be deployed as two services:
+
+### Backend — Railway
+
+Configure:
+
+```text id="6m3z9p"
+MURF_API_KEY
+DEEPGRAM_API_KEY
+GOOGLE_API_KEY
+LIVEKIT_URL
+LIVEKIT_API_KEY
+LIVEKIT_API_SECRET
+```
+
+### Frontend — Vercel
+
+Configure:
+
+```text id="9r5c2k"
+LIVEKIT_URL
+LIVEKIT_API_KEY
+LIVEKIT_API_SECRET
+AGENT_NAME
+```
+
+Both services must use the **same LiveKit project**.
+
+---
+
+# 🔮 Future Improvements
+
+* 🗄️ SQLite → PostgreSQL for production scale
+* 📞 Inbound SIP calling
+* 🧑‍⚕️ More specialized health agents
+* 📱 WhatsApp / SMS access
+* 🌍 More regional languages
+* 📊 Real-time analytics
+* 🔐 Stronger authentication
+* ☁️ Scalable cloud deployment
+
+---
+
+# 🔗 Links
 
 * [Murf API Docs](https://murf.ai/api/docs)
 * [Murf Voice Library](https://murf.ai/api/docs/voices-styles/voice-library)
 * [LiveKit Docs](https://docs.livekit.io)
 * [Deepgram Docs](https://developers.deepgram.com)
 * [Murf Falcon Benchmarks](https://murf.ai/falcon/benchmarks)
-* [TTS Latency Benchmarker](https://github.com/sahilsgupta/tts-latency-benchmarker) — run your own p50/p95 tests across providers
+* [TTS Latency Benchmarker](https://github.com/sahilsgupta/tts-latency-benchmarker)
 * [Murf Discord](https://discord.gg/FbKAy96Sz7)
-* [Murf Startup Incubator](https://murf.ai/api) — 50M free characters for startups
 
 ---
 
-## License
+# 🏆 10-Day Journey at a Glance
+
+| Day | Milestone                            |
+| --- | ------------------------------------ |
+| 1   | 🎙️ Voice Agent Foundation           |
+| 2   | 🩺 Health Access Assistant           |
+| 3   | 🧠 Persistent Memory                 |
+| 4   | 👤 Personalized Conversations        |
+| 5   | 🏥 Government Health Facility Lookup |
+| 6   | 📞 Outbound SIP Calling              |
+| 7   | 🧑‍💼 Human Support Escalation       |
+| 8   | 📊 Health Access Dashboard           |
+| 9   | 🔄 Agent Handoff + Analytics         |
+| 10  | 🚀 Final Integration                 |
+
+---
+
+# 📄 License
 
 MIT
