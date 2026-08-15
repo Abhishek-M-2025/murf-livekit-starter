@@ -56,6 +56,7 @@ flowchart LR
     style J fill:#534AB7,stroke:#AFA9EC,color:#fff
     style K fill:#0F6E56,stroke:#5DCAA5,color:#fff
 ```
+---
 <img width="1536" height="1024" alt="Image" src="https://github.com/user-attachments/assets/dacfaa05-71f7-4a48-9d3a-da7ea02649b2" />
 ---
 
@@ -93,7 +94,7 @@ Added memory so the assistant could remember useful user information.
 
 * Implemented persistent user/profile facts.
 * Stored useful information such as location and preferences.
-* Connected memory with the voice-agent conversation.
+* Connected memory (Sql-lite) with the voice-agent conversation.
 * Reduced the need to repeatedly ask users for the same information.
 
 ---
